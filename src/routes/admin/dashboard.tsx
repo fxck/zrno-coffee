@@ -40,6 +40,12 @@ function Dashboard() {
           <span className="font-mono text-[11px] tracking-[0.2em] text-taupe">BACK OFFICE</span>
         </div>
         <div className="flex items-center gap-5">
+          <Link
+            to="/admin/journal"
+            className="font-mono text-[11px] tracking-[0.18em] uppercase text-taupe hover:text-cream transition-colors"
+          >
+            Journal
+          </Link>
           <span className="font-mono text-[11px] text-muted hidden sm:inline">{data.user.email}</span>
           <Button variant="ghost" size="sm" onClick={logout}>
             Sign out
@@ -67,6 +73,26 @@ function Dashboard() {
               <CardValue className="text-amber">{data.stats.revenue} Kč</CardValue>
             </CardHeader>
           </Card>
+        </section>
+
+        <section>
+          <Link to="/admin/journal" className="block group">
+            <Card className="p-6 flex items-center justify-between hover:bg-elevated transition-colors">
+              <div>
+                <div className="font-mono text-[11px] tracking-[0.2em] uppercase text-taupe">
+                  Content
+                </div>
+                <div className="font-display text-3xl mt-2 text-cream">THE JOURNAL</div>
+                <p className="text-taupe text-sm mt-1">Write and manage blog posts.</p>
+              </div>
+              <span className="font-mono text-[11px] tracking-[0.18em] uppercase text-amber inline-flex items-center gap-2">
+                Manage
+                <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                  →
+                </span>
+              </span>
+            </Card>
+          </Link>
         </section>
 
         <section>

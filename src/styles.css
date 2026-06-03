@@ -27,6 +27,9 @@ body,
 
 html {
   scroll-behavior: smooth;
+  /* Keep anchored sections clear of the sticky nav when jumping via #links */
+  scroll-padding-top: 5rem;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -35,11 +38,73 @@ body {
   color: var(--color-cream);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Editorial body text: real kerning + common/contextual ligatures */
+  font-feature-settings: "kern" 1, "liga" 1, "clig" 1, "calt" 1;
+  text-rendering: optimizeLegibility;
+}
+
+/* Optical rhythm — set once, globally, so the hierarchy feels intentional. */
+p {
+  text-wrap: pretty; /* avoid orphans / ragged last lines */
+  font-feature-settings: "kern" 1, "liga" 1, "clig" 1;
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance; /* even, deliberate headline line lengths */
+}
+
+/* Anton is an all-caps display face — lining/tabular figures + tight kerning */
+.font-display {
+  font-feature-settings: "kern" 1, "tnum" 1, "lnum" 1;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+/* Geist Mono captions: enable its monospaced figure set + a hair more air
+   is handled per-utility (tracking-*), but lock kerning + ligatures here. */
+.font-mono {
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1, "ss01" 1;
+}
+
+/* Inter body: slightly tighter measure reads more "designed" than default. */
+.font-body {
+  letter-spacing: -0.006em;
 }
 
 ::selection {
   background: var(--color-amber);
   color: var(--color-espresso);
+  text-shadow: none;
+}
+::-moz-selection {
+  background: var(--color-amber);
+  color: var(--color-espresso);
+}
+
+/* Confident, on-brand keyboard focus ring — never the default blue glow. */
+:focus-visible {
+  outline: 2px solid var(--color-amber);
+  outline-offset: 3px;
+  border-radius: 1px;
+}
+/* Mouse clicks shouldn't show the ring; :focus-visible already handles this,
+   but be explicit for inputs/buttons that some UAs still outline. */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Honour the OS reduced-motion setting at the CSS layer too (covers the
+   marquee + smooth-scroll, complementing useReducedMotion() in JS). */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .zrno-marquee-track {
+    animation: none !important;
+    transform: none !important;
+  }
 }
 
 /* Layered warm glow over espresso — evokes a dark cafe without a photo */
@@ -90,4 +155,92 @@ body {
   font-size: clamp(2.25rem, 6.5vw, 5.5rem);
   line-height: 0.9;
   letter-spacing: -0.01em;
+}
+
+/* ------------------------------------------------------------------ *
+ * Motion + craft helpers
+ * ------------------------------------------------------------------ */
+
+/* Infinite marquee strip — translateX only (compositor-friendly).
+   The track renders the content twice; -50% loops seamlessly. */
+@keyframes zrno-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+.zrno-marquee-track {
+  animation-name: zrno-marquee;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+/* Underline-wipe links: amber rule scales in from the left on hover.
+   Pointer-coarse devices just get the colour change (no hover state). */
+.zrno-underline {
+  transition: color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.zrno-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.32em;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@media (hover: hover) and (pointer: fine) {
+  .zrno-underline:hover {
+    color: var(--color-cream);
+  }
+  .zrno-underline:hover::after {
+    transform: scaleX(1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .zrno-underline::after {
+    transition: none;
+  }
+}
+
+/* Menu-row hover marker — a small amber index dot/rule that wipes in.
+   Driven purely by CSS so it never touches the main JS thread. */
+.menu-row {
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.menu-marker {
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.menu-price {
+  transition:
+    transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    color 0.4s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .menu-row:hover {
+    transform: translateX(10px);
+  }
+  .menu-row:hover .menu-marker {
+    transform: scaleX(1);
+  }
+  .menu-row:hover .menu-price {
+    transform: translateX(-6px);
+  }
+  .menu-row:hover .menu-name {
+    color: var(--color-cream);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .menu-row,
+  .menu-marker,
+  .menu-price {
+    transition: none;
+  }
 }

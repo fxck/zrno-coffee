@@ -1,0 +1,239 @@
+import { useEditor, EditorContent, type Editor } from '@tiptap/react'
+import StarterKit from '@tiptap/starter-kit'
+import Image from '@tiptap/extension-image'
+import Placeholder from '@tiptap/extension-placeholder'
+import { useEffect } from 'react'
+import {
+  Bold,
+  Italic,
+  Heading2,
+  Heading3,
+  Quote,
+  List,
+  ListOrdered,
+  Link2,
+  Link2Off,
+  Image as ImageIcon,
+  Minus,
+  Undo2,
+  Redo2,
+} from 'lucide-react'
+
+// The shared prose stylesheet — the SAME file the published article imports.
+// This is what makes the editing canvas a 1:1 preview of the live article.
+import '../journal-prose.css'
+
+// NOTE: This component is the only place Tiptap is imported. It never runs on
+// the server: `immediatelyRender: false` defers rendering to the client (the
+// editor needs the DOM), and no server fn / loader imports this module.
+
+type Props = {
+  value: string
+  onChange: (html: string) => void
+}
+
+function ToolbarButton({
+  onClick,
+  active,
+  disabled,
+  title,
+  children,
+}: {
+  onClick: () => void
+  active?: boolean
+  disabled?: boolean
+  title: string
+  children: React.ReactNode
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      title={title}
+      aria-label={title}
+      aria-pressed={active}
+      className={[
+        'inline-flex h-9 w-9 items-center justify-center transition-colors',
+        'disabled:opacity-30 disabled:pointer-events-none',
+        active
+          ? 'bg-amber text-espresso'
+          : 'text-taupe hover:text-cream hover:bg-elevated',
+      ].join(' ')}
+    >
+      {children}
+    </button>
+  )
+}
+
+function Divider() {
+  return <span className="mx-1 h-5 w-px self-center bg-muted/25" aria-hidden />
+}
+
+function Toolbar({ editor }: { editor: Editor }) {
+  function setLink() {
+    const prev = editor.getAttributes('link').href as string | undefined
+    const url = window.prompt('Link URL', prev ?? 'https://')
+    if (url === null) return
+    if (url === '') {
+      editor.chain().focus().extendMarkRange('link').unsetLink().run()
+      return
+    }
+    editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
+  }
+
+  function addImage() {
+    const url = window.prompt('Image URL')
+    if (!url) return
+    editor.chain().focus().setImage({ src: url }).run()
+  }
+
+  return (
+    <div className="sticky top-0 z-10 -mx-4 mb-6 flex flex-wrap items-center gap-0.5 border-b border-muted/20 bg-espresso/95 px-4 py-2 backdrop-blur supports-[backdrop-filter]:bg-espresso/80">
+      <ToolbarButton
+        title="Bold"
+        onClick={() => editor.chain().focus().toggleBold().run()}
+        active={editor.isActive('bold')}
+      >
+        <Bold size={16} strokeWidth={2.5} />
+      </ToolbarButton>
+      <ToolbarButton
+        title="Italic"
+        onClick={() => editor.chain().focus().toggleItalic().run()}
+        active={editor.isActive('italic')}
+      >
+        <Italic size={16} strokeWidth={2.5} />
+      </ToolbarButton>
+
+      <Divider />
+
+      <ToolbarButton
+        title="Heading 2"
+        onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+        active={editor.isActive('heading', { level: 2 })}
+      >
+        <Heading2 size={17} strokeWidth={2.25} />
+      </ToolbarButton>
+      <ToolbarButton
+        title="Heading 3"
+        onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+        active={editor.isActive('heading', { level: 3 })}
+      >
+        <Heading3 size={17} strokeWidth={2.25} />
+      </ToolbarButton>
+      <ToolbarButton
+        title="Quote"
+        onClick={() => editor.chain().focus().toggleBlockquote().run()}
+        active={editor.isActive('blockquote')}
+      >
+        <Quote size={16} strokeWidth={2.25} />
+      </ToolbarButton>
+
+      <Divider />
+
+      <ToolbarButton
+        title="Bullet list"
+        onClick={() => editor.chain().focus().toggleBulletList().run()}
+        active={editor.isActive('bulletList')}
+      >
+        <List size={17} strokeWidth={2.25} />
+      </ToolbarButton>
+      <ToolbarButton
+        title="Numbered list"
+        onClick={() => editor.chain().focus().toggleOrderedList().run()}
+        active={editor.isActive('orderedList')}
+      >
+        <ListOrdered size={17} strokeWidth={2.25} />
+      </ToolbarButton>
+
+      <Divider />
+
+      <ToolbarButton title="Add / edit link" onClick={setLink} active={editor.isActive('link')}>
+        <Link2 size={16} strokeWidth={2.25} />
+      </ToolbarButton>
+      <ToolbarButton
+        title="Remove link"
+        onClick={() => editor.chain().focus().unsetLink().run()}
+        disabled={!editor.isActive('link')}
+      >
+        <Link2Off size={16} strokeWidth={2.25} />
+      </ToolbarButton>
+      <ToolbarButton title="Image by URL" onClick={addImage}>
+        <ImageIcon size={16} strokeWidth={2.25} />
+      </ToolbarButton>
+      <ToolbarButton
+        title="Horizontal rule"
+        onClick={() => editor.chain().focus().setHorizontalRule().run()}
+      >
+        <Minus size={16} strokeWidth={2.5} />
+      </ToolbarButton>
+
+      <Divider />
+
+      <ToolbarButton
+        title="Undo"
+        onClick={() => editor.chain().focus().undo().run()}
+        disabled={!editor.can().undo()}
+      >
+        <Undo2 size={16} strokeWidth={2.25} />
+      </ToolbarButton>
+      <ToolbarButton
+        title="Redo"
+        onClick={() => editor.chain().focus().redo().run()}
+        disabled={!editor.can().redo()}
+      >
+        <Redo2 size={16} strokeWidth={2.25} />
+      </ToolbarButton>
+    </div>
+  )
+}
+
+export default function JournalEditor({ value, onChange }: Props) {
+  const editor = useEditor({
+    // CRITICAL for SSR: do not render the editor on the server (needs the DOM).
+    immediatelyRender: false,
+    extensions: [
+      StarterKit.configure({
+        // Only H2/H3 in the editorial body (H1 is the article title field).
+        heading: { levels: [2, 3] },
+        // StarterKit v3 bundles Link — configure it here (don't add a 2nd Link).
+        link: {
+          openOnClick: false,
+          autolink: true,
+          HTMLAttributes: { rel: 'noopener noreferrer nofollow', target: '_blank' },
+        },
+      }),
+      Image.configure({ inline: false, HTMLAttributes: { loading: 'lazy' } }),
+      Placeholder.configure({
+        placeholder: 'Tell the story…',
+      }),
+    ],
+    content: value,
+    editorProps: {
+      attributes: {
+        // SAME class as the published article — 1:1 typography while editing.
+        class: 'prose-article focus:outline-none',
+      },
+    },
+    onUpdate: ({ editor }) => onChange(editor.getHTML()),
+  })
+
+  // Keep the editor in sync if the bound value is replaced externally
+  // (e.g. when an edit-form loads its post after mount).
+  useEffect(() => {
+    if (!editor) return
+    const current = editor.getHTML()
+    if (value !== current && value !== undefined) {
+      editor.commands.setContent(value || '', { emitUpdate: false })
+    }
+    // Only re-sync on external value changes, not on every editor identity tick.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value, editor])
+
+  return (
+    <div className="w-full">
+      {editor && <Toolbar editor={editor} />}
+      <EditorContent editor={editor} />
+    </div>
+  )
+}

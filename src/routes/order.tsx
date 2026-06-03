@@ -1,15 +1,27 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useState } from 'react'
-import { MENU } from '../lib/menu'
+import { motion, useReducedMotion } from 'motion/react'
+import { MENU, MENU_BY_ID } from '../lib/menu'
 import { Button } from '../components/ui/button'
 import { Input, Label } from '../components/ui/input'
+import { EASE_OUT, MaskedLines } from '../components/motion-primitives'
 
-export const Route = createFileRoute('/order')({ component: OrderPage })
+export const Route = createFileRoute('/order')({
+  // Deep-link from the landing menu: /order?add=<itemId> pre-seeds the cart.
+  validateSearch: (search: Record<string, unknown>): { add?: string } => ({
+    add: typeof search.add === 'string' ? search.add : undefined,
+  }),
+  component: OrderPage,
+})
 
 type OrderResult = { orderId: string; total: number; status: string }
 
 function OrderPage() {
-  const [qty, setQty] = useState<Record<string, number>>({})
+  const reduce = useReducedMotion()
+  const { add } = Route.useSearch()
+  const [qty, setQty] = useState<Record<string, number>>(() =>
+    add && MENU_BY_ID[add] ? { [add]: 1 } : {},
+  )
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [busy, setBusy] = useState(false)
@@ -58,13 +70,29 @@ function OrderPage() {
       ) : (
         <main className="px-6 md:px-14 py-12 md:py-16 grid lg:grid-cols-[1.4fr_1fr] gap-12 max-w-6xl">
           <section>
-            <div className="font-mono text-xs tracking-[0.2em] text-amber">ORDER ONLINE</div>
-            <h1 className="font-display t-lg mt-3 mb-10">PICK YOUR CUP</h1>
+            <motion.div
+              className="font-mono text-xs tracking-[0.2em] text-amber"
+              initial={reduce ? false : { opacity: 0, y: 10 }}
+              animate={reduce ? {} : { opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: EASE_OUT }}
+            >
+              ORDER ONLINE
+            </motion.div>
+            <h1 className="font-display t-lg mt-3 mb-10">
+              <MaskedLines lines={['PICK YOUR CUP']} trigger="mount" delay={0.08} />
+            </h1>
             <div>
-              {MENU.map((m) => (
-                <div
+              {MENU.map((m, i) => (
+                <motion.div
                   key={m.id}
                   className="flex items-center justify-between gap-4 border-t border-muted/15 py-5"
+                  initial={reduce ? false : { opacity: 0, y: 16 }}
+                  animate={reduce ? {} : { opacity: 1, y: 0 }}
+                  transition={{
+                    duration: 0.5,
+                    ease: EASE_OUT,
+                    delay: reduce ? 0 : 0.15 + i * 0.06,
+                  }}
                 >
                   <div>
                     <div className="font-display text-2xl md:text-3xl leading-none">
@@ -94,7 +122,7 @@ function OrderPage() {
                       </button>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           </section>
@@ -149,7 +177,9 @@ function Confirmation({ result }: { result: OrderResult }) {
   return (
     <main className="px-6 md:px-14 py-24 max-w-2xl">
       <div className="font-mono text-xs tracking-[0.2em] text-amber">ORDER {result.status.toUpperCase()}</div>
-      <h1 className="font-display t-lg mt-3">THANK YOU.</h1>
+      <h1 className="font-display t-lg mt-3">
+        <MaskedLines lines={['THANK YOU.']} trigger="mount" />
+      </h1>
       <p className="text-taupe mt-6 leading-relaxed max-w-md">
         Order <span className="text-cream">#{result.orderId.slice(0, 8)}</span> is in. We’ve sent a
         confirmation email — open the Mailpit inbox to see it. Total charged:{' '}

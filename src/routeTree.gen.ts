@@ -11,11 +11,16 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as OrderRouteImport } from './routes/order'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as JournalIndexRouteImport } from './routes/journal/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as JournalSlugRouteImport } from './routes/journal/$slug'
 import { Route as ApiSubscribeRouteImport } from './routes/api/subscribe'
 import { Route as ApiOrdersRouteImport } from './routes/api/orders'
 import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
+import { Route as AdminJournalIndexRouteImport } from './routes/admin/journal/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as AdminJournalNewRouteImport } from './routes/admin/journal/new'
+import { Route as AdminJournalIdEditRouteImport } from './routes/admin/journal/$id.edit'
 
 const OrderRoute = OrderRouteImport.update({
   id: '/order',
@@ -27,9 +32,19 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const JournalIndexRoute = JournalIndexRouteImport.update({
+  id: '/journal/',
+  path: '/journal/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/admin/',
   path: '/admin/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JournalSlugRoute = JournalSlugRouteImport.update({
+  id: '/journal/$slug',
+  path: '/journal/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiSubscribeRoute = ApiSubscribeRouteImport.update({
@@ -47,9 +62,24 @@ const AdminDashboardRoute = AdminDashboardRouteImport.update({
   path: '/admin/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminJournalIndexRoute = AdminJournalIndexRouteImport.update({
+  id: '/admin/journal/',
+  path: '/admin/journal/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminJournalNewRoute = AdminJournalNewRouteImport.update({
+  id: '/admin/journal/new',
+  path: '/admin/journal/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminJournalIdEditRoute = AdminJournalIdEditRouteImport.update({
+  id: '/admin/journal/$id/edit',
+  path: '/admin/journal/$id/edit',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -59,8 +89,13 @@ export interface FileRoutesByFullPath {
   '/admin/dashboard': typeof AdminDashboardRoute
   '/api/orders': typeof ApiOrdersRoute
   '/api/subscribe': typeof ApiSubscribeRoute
+  '/journal/$slug': typeof JournalSlugRoute
   '/admin/': typeof AdminIndexRoute
+  '/journal/': typeof JournalIndexRoute
+  '/admin/journal/new': typeof AdminJournalNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/admin/journal/': typeof AdminJournalIndexRoute
+  '/admin/journal/$id/edit': typeof AdminJournalIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -68,8 +103,13 @@ export interface FileRoutesByTo {
   '/admin/dashboard': typeof AdminDashboardRoute
   '/api/orders': typeof ApiOrdersRoute
   '/api/subscribe': typeof ApiSubscribeRoute
+  '/journal/$slug': typeof JournalSlugRoute
   '/admin': typeof AdminIndexRoute
+  '/journal': typeof JournalIndexRoute
+  '/admin/journal/new': typeof AdminJournalNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/admin/journal': typeof AdminJournalIndexRoute
+  '/admin/journal/$id/edit': typeof AdminJournalIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -78,8 +118,13 @@ export interface FileRoutesById {
   '/admin/dashboard': typeof AdminDashboardRoute
   '/api/orders': typeof ApiOrdersRoute
   '/api/subscribe': typeof ApiSubscribeRoute
+  '/journal/$slug': typeof JournalSlugRoute
   '/admin/': typeof AdminIndexRoute
+  '/journal/': typeof JournalIndexRoute
+  '/admin/journal/new': typeof AdminJournalNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/admin/journal/': typeof AdminJournalIndexRoute
+  '/admin/journal/$id/edit': typeof AdminJournalIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -89,8 +134,13 @@ export interface FileRouteTypes {
     | '/admin/dashboard'
     | '/api/orders'
     | '/api/subscribe'
+    | '/journal/$slug'
     | '/admin/'
+    | '/journal/'
+    | '/admin/journal/new'
     | '/api/auth/$'
+    | '/admin/journal/'
+    | '/admin/journal/$id/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -98,8 +148,13 @@ export interface FileRouteTypes {
     | '/admin/dashboard'
     | '/api/orders'
     | '/api/subscribe'
+    | '/journal/$slug'
     | '/admin'
+    | '/journal'
+    | '/admin/journal/new'
     | '/api/auth/$'
+    | '/admin/journal'
+    | '/admin/journal/$id/edit'
   id:
     | '__root__'
     | '/'
@@ -107,8 +162,13 @@ export interface FileRouteTypes {
     | '/admin/dashboard'
     | '/api/orders'
     | '/api/subscribe'
+    | '/journal/$slug'
     | '/admin/'
+    | '/journal/'
+    | '/admin/journal/new'
     | '/api/auth/$'
+    | '/admin/journal/'
+    | '/admin/journal/$id/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -117,8 +177,13 @@ export interface RootRouteChildren {
   AdminDashboardRoute: typeof AdminDashboardRoute
   ApiOrdersRoute: typeof ApiOrdersRoute
   ApiSubscribeRoute: typeof ApiSubscribeRoute
+  JournalSlugRoute: typeof JournalSlugRoute
   AdminIndexRoute: typeof AdminIndexRoute
+  JournalIndexRoute: typeof JournalIndexRoute
+  AdminJournalNewRoute: typeof AdminJournalNewRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  AdminJournalIndexRoute: typeof AdminJournalIndexRoute
+  AdminJournalIdEditRoute: typeof AdminJournalIdEditRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -137,11 +202,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/journal/': {
+      id: '/journal/'
+      path: '/journal'
+      fullPath: '/journal/'
+      preLoaderRoute: typeof JournalIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/': {
       id: '/admin/'
       path: '/admin'
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/journal/$slug': {
+      id: '/journal/$slug'
+      path: '/journal/$slug'
+      fullPath: '/journal/$slug'
+      preLoaderRoute: typeof JournalSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/subscribe': {
@@ -165,11 +244,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/journal/': {
+      id: '/admin/journal/'
+      path: '/admin/journal'
+      fullPath: '/admin/journal/'
+      preLoaderRoute: typeof AdminJournalIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
       fullPath: '/api/auth/$'
       preLoaderRoute: typeof ApiAuthSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/journal/new': {
+      id: '/admin/journal/new'
+      path: '/admin/journal/new'
+      fullPath: '/admin/journal/new'
+      preLoaderRoute: typeof AdminJournalNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/journal/$id/edit': {
+      id: '/admin/journal/$id/edit'
+      path: '/admin/journal/$id/edit'
+      fullPath: '/admin/journal/$id/edit'
+      preLoaderRoute: typeof AdminJournalIdEditRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -181,8 +281,13 @@ const rootRouteChildren: RootRouteChildren = {
   AdminDashboardRoute: AdminDashboardRoute,
   ApiOrdersRoute: ApiOrdersRoute,
   ApiSubscribeRoute: ApiSubscribeRoute,
+  JournalSlugRoute: JournalSlugRoute,
   AdminIndexRoute: AdminIndexRoute,
+  JournalIndexRoute: JournalIndexRoute,
+  AdminJournalNewRoute: AdminJournalNewRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  AdminJournalIndexRoute: AdminJournalIndexRoute,
+  AdminJournalIdEditRoute: AdminJournalIdEditRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
