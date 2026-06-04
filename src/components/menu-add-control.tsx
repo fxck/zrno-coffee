@@ -89,18 +89,22 @@ export function MenuAddControl({
               onClick={() => addItem(id, 1)}
               aria-label={`Add ${name} to your order`}
               whileTap={reduce ? undefined : { scale: 0.94 }}
-              className="zrno-add group/add relative isolate inline-flex items-center gap-2 overflow-hidden rounded-full border border-amber/50 px-4 py-2 font-mono text-[11px] tracking-[0.2em] text-amber"
+              className={`zrno-add group/add relative isolate inline-flex items-center gap-2 overflow-hidden rounded-full border border-amber/45 px-4 py-2 font-mono text-[11px] tracking-[0.2em] text-amber transition-colors ${BECHAMEL} group-hover/row:border-amber/90 hover:border-amber`}
             >
-              {/* The pour — rises on row-hover OR pill-hover, béchamel-slow. */}
+              {/* Two layered states:
+                  · hovering the ROW only primes the pill (brighter outline,
+                    the bean leans) — a readiness cue.
+                  · hovering the PILL itself pours the amber up from the base
+                    and inverts the label/bean to espresso. */}
               <span
                 aria-hidden
-                className={`absolute inset-0 -z-10 origin-bottom scale-y-0 rounded-full bg-amber transition-transform ${BECHAMEL} group-hover/add:scale-y-100 group-hover/row:scale-y-100`}
+                className={`absolute inset-0 -z-10 origin-bottom scale-y-0 rounded-full bg-amber transition-transform ${BECHAMEL} group-hover/add:scale-y-100`}
               />
               <BeanMark
-                className={`h-[1.05em] w-[0.8em] transition-[transform,color] ${BECHAMEL} group-hover/add:rotate-[26deg] group-hover/add:text-espresso group-hover/row:rotate-[26deg] group-hover/row:text-espresso`}
+                className={`h-[1.05em] w-[0.8em] transition-[transform,color] ${BECHAMEL} group-hover/row:rotate-[12deg] group-hover/add:rotate-[26deg] group-hover/add:text-espresso`}
               />
               <span
-                className={`transition-colors ${BECHAMEL} group-hover/add:text-espresso group-hover/row:text-espresso`}
+                className={`transition-colors ${BECHAMEL} group-hover/add:text-espresso`}
               >
                 ADD
               </span>

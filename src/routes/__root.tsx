@@ -99,9 +99,14 @@ function RootLayout() {
     firstRef.current = false
   }, [])
 
+  // Fade only when the top-level SECTION changes (home / order / journal /
+  // admin / o), not on every sub-navigation. So moving between admin pages
+  // doesn't re-fade — the back-office app bar stays static.
+  const section = '/' + (pathname.split('/')[1] ?? '')
+
   return (
     <motion.div
-      key={pathname}
+      key={section}
       initial={animateThisPage ? { opacity: 0 } : false}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3, ease: EASE_OUT }}

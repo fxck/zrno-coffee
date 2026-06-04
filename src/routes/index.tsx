@@ -10,7 +10,7 @@ import {
 import { MENU } from '../lib/menu'
 import { useCart } from '../lib/cart'
 import { SiteHeader } from '../components/site-header'
-import { Wordmark, BeanO } from '../components/bean-mark'
+import { Wordmark } from '../components/bean-mark'
 import { MenuAddControl } from '../components/menu-add-control'
 import {
   EASE_OUT,
@@ -154,29 +154,15 @@ function Home() {
             <h1 className="font-display t-hero px-6 md:px-14 mt-4 md:mt-6 pb-[2vh] select-none">
               {/* ZRN carries the bean-rain on hover; the O is the angled
                   bean mark itself, tipping in and gently wiggling forever. */}
+              {/* The whole word rains (each letter, incl. the O) under its own
+                  cursor cloud. The angled bean-O lives on as the logo mark. */}
               <motion.span
-                className="inline-flex items-baseline"
+                className="block"
                 initial={reduce ? false : { opacity: 0, y: '0.1em' }}
                 animate={reduce ? {} : { opacity: 1, y: 0 }}
                 transition={{ duration: 1.1, ease: EASE_OUT, delay: 0.4 }}
               >
-                <BeanRain lines={['ZRN']} />
-                {reduce ? (
-                  <BeanO className="ml-[0.02em]" />
-                ) : (
-                  <motion.span
-                    className="inline-block"
-                    style={{ transformOrigin: '50% 100%' }}
-                    initial={{ rotate: 0 }}
-                    animate={{ rotate: 18 }}
-                    transition={{ duration: 0.9, ease: EASE_OUT, delay: 1.15 }}
-                  >
-                    {/* starts upright, then tips off its base (bottom-centre
-                        pivot — as if losing balance) to the bean angle once,
-                        and stays there. No perpetual motion. */}
-                    <BeanO angle={0} className="ml-[0.02em]" />
-                  </motion.span>
-                )}
+                <BeanRain lines={['ZRNO']} />
               </motion.span>
             </h1>
           </div>
@@ -345,7 +331,6 @@ function Home() {
             as="div"
             className="flex items-center gap-4 font-mono text-xs tracking-[0.2em] text-amber"
           >
-            <span>(01)</span>
             <span aria-hidden className="h-px w-12 bg-amber/40" />
             <span>THE ROASTERY</span>
           </Reveal>

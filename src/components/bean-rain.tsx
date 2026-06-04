@@ -69,6 +69,7 @@ export function BeanRain({
     let fs = 48 // cached font size (px) — refreshed on resize/enter, never per-frame
     let beans: Bean[] = []
     let mask: HTMLCanvasElement | null = null
+    const pointer = { x: -9999 }
     let hovering = false
     let hoverAlpha = 0
     let raf = 0
@@ -80,7 +81,7 @@ export function BeanRain({
     // doesn't get 80px beans screaming down the screen — they stay bean-sized
     // and gently paced at every headline scale.
     const beanLen = () =>
-      Math.max(6, Math.min(26, fs * 0.07)) * rand(0.72, 1.25)
+      Math.max(12, Math.min(46, fs * 0.12)) * rand(0.8, 1.18)
     const gravity = () => Math.min(1000, Math.max(420, fs * 1.3))
     const TERMINAL = 380
 
@@ -96,7 +97,7 @@ export function BeanRain({
     }
 
     function seed() {
-      const count = Math.max(14, Math.min(90, Math.round(width / 24)))
+      const count = Math.max(22, Math.min(180, Math.round(width / 14)))
       beans = Array.from({ length: count }, (_, i) => {
         const b: Bean = {
           x: 0, y: 0, vx: 0, vy: 0, rot: 0, vrot: 0, len: 10, deep: false,
@@ -179,27 +180,43 @@ export function BeanRain({
       ctx!.clearRect(0, 0, canvas.width, canvas.height)
 
       if (hoverAlpha > 0.01 && mask) {
-        // Rain falls across the whole headline and into every letter — the
-        // word fills with falling beans (fading in/out with hover). The
-        // glyph mask is the only clip; no cursor spotlight.
-        ctx!.setTransform(dpr, 0, 0, dpr, 0, 0)
-        ctx!.globalAlpha = hoverAlpha
-        for (let i = 0; i < beans.length; i++) {
-          const b = beans[i]
-          ctx!.save()
-          ctx!.translate(b.x, b.y)
-          ctx!.rotate(b.rot)
-          ctx!.fillStyle = b.deep ? AMBERDEEP : AMBER
-          beanPath(b.len)
-          ctx!.fill('evenodd')
-          ctx!.restore()
+        // A "cloud" overhead at the cursor's x: rain falls straight down in a
+        // vertical column (full height) around pointer.x, clipped to the
+        // glyphs — so it rains into the letter you're over, not the whole word.
+        const bandHalf = Math.max(36, fs * 0.36)
+        const bx = Math.max(0, Math.floor((pointer.x - bandHalf) * dpr))
+        const bw = Math.min(canvas.width - bx, Math.ceil(bandHalf * 2 * dpr))
+        if (bw > 0) {
+          ctx!.setTransform(dpr, 0, 0, dpr, 0, 0)
+          ctx!.globalAlpha = hoverAlpha
+          for (let i = 0; i < beans.length; i++) {
+            const b = beans[i]
+            if (Math.abs(b.x - pointer.x) > bandHalf + b.len) continue
+            ctx!.save()
+            ctx!.translate(b.x, b.y)
+            ctx!.rotate(b.rot)
+            ctx!.fillStyle = b.deep ? AMBERDEEP : AMBER
+            beanPath(b.len)
+            ctx!.fill('evenodd')
+            ctx!.restore()
+          }
+          ctx!.globalAlpha = 1
+          // clip to the glyph shapes (only the band strip)
+          ctx!.setTransform(1, 0, 0, 1, 0, 0)
+          ctx!.globalCompositeOperation = 'destination-in'
+          ctx!.drawImage(mask, bx, 0, bw, canvas.height, bx, 0, bw, canvas.height)
+          // soft-edged vertical column so the cloud feathers at its sides
+          const gx0 = (pointer.x - bandHalf) * dpr
+          const gx1 = (pointer.x + bandHalf) * dpr
+          const grad = ctx!.createLinearGradient(gx0, 0, gx1, 0)
+          grad.addColorStop(0, 'rgba(0,0,0,0)')
+          grad.addColorStop(0.25, `rgba(0,0,0,${hoverAlpha})`)
+          grad.addColorStop(0.75, `rgba(0,0,0,${hoverAlpha})`)
+          grad.addColorStop(1, 'rgba(0,0,0,0)')
+          ctx!.fillStyle = grad
+          ctx!.fillRect(bx, 0, bw, canvas.height)
+          ctx!.globalCompositeOperation = 'source-over'
         }
-        ctx!.globalAlpha = 1
-        // clip to the glyph shapes
-        ctx!.setTransform(1, 0, 0, 1, 0, 0)
-        ctx!.globalCompositeOperation = 'destination-in'
-        ctx!.drawImage(mask, 0, 0)
-        ctx!.globalCompositeOperation = 'source-over'
       }
 
       if (hovering || hoverAlpha > 0.01) {
@@ -209,9 +226,13 @@ export function BeanRain({
       }
     }
 
-    function onEnter() {
+    function onMove(e: MouseEvent) {
+      pointer.x = e.clientX - host.getBoundingClientRect().left
+    }
+    function onEnter(e: MouseEvent) {
       hovering = true
       fs = parseFloat(getComputedStyle(host).fontSize) || 48
+      onMove(e)
       buildMask()
       if (!raf) {
         lastT = performance.now()
@@ -225,11 +246,13 @@ export function BeanRain({
     const ro = new ResizeObserver(() => resize())
     ro.observe(host)
     resize()
+    host.addEventListener('mousemove', onMove)
     host.addEventListener('mouseenter', onEnter)
     host.addEventListener('mouseleave', onLeave)
 
     return () => {
       ro.disconnect()
+      host.removeEventListener('mousemove', onMove)
       host.removeEventListener('mouseenter', onEnter)
       host.removeEventListener('mouseleave', onLeave)
       if (raf) cancelAnimationFrame(raf)
