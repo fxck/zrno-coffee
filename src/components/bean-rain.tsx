@@ -83,7 +83,12 @@ export function BeanRain({
       x: 0, y: 0, vx: 0, vy: 0, rot: 0, vrot: 0, len: 10, deep: false, active: false,
     }))
     let mask: HTMLCanvasElement | null = null
-    const pointer = { x: -9999 }
+    // pointer.vx = smoothed horizontal cursor speed (px/s) so spawned beans
+    // inherit the "throw" of the mouse; it decays each frame so a still cursor
+    // drops beans straight down.
+    const pointer = { x: -9999, vx: 0 }
+    let lastMoveX = 0
+    let lastMoveT = 0
     let hovering = false
     let emitAcc = 0
     let emitCount = 0
@@ -108,7 +113,10 @@ export function BeanRain({
         ? Math.random() * width
         : pointer.x + rand(-spreadHalf(), spreadHalf())
       b.y = atY ?? -b.len - Math.random() * fs * 0.25
-      b.vx = rand(-2, 2)
+      // Inherit the cursor's throw: a fast swipe launches beans sideways and
+      // gravity arcs them down. Clamped so a frantic flick can't fire them off
+      // the canvas, plus a little jitter so a stream isn't a rigid ribbon.
+      b.vx = Math.max(-460, Math.min(460, pointer.vx * 0.22)) + rand(-6, 6)
       b.vy = rand(8, 36)
       b.rot = Math.random() * Math.PI * 2
       b.vrot = rand(-0.4, 0.4)
@@ -190,6 +198,11 @@ export function BeanRain({
       const dt = Math.min(0.05, (t - lastT) / 1000 || 0)
       lastT = t
 
+      // Bleed the inherited cursor speed toward 0 (~half-life 120ms) so beans
+      // only fly sideways while the mouse is actually moving; once it rests,
+      // fresh beans drop straight down.
+      pointer.vx *= Math.exp(-dt * 6)
+
       // Emit from the cursor x (or across the glyph) while hovering. The
       // intensity random-walks so the stream isn't metronomic — it ebbs to a
       // trickle and surges to heavier bursts, like real rain.
@@ -246,11 +259,26 @@ export function BeanRain({
       }
     }
     function onMove(e: MouseEvent) {
-      pointer.x = e.clientX - host.getBoundingClientRect().left
+      const x = e.clientX - host.getBoundingClientRect().left
+      const now = performance.now()
+      const mdt = (now - lastMoveT) / 1000
+      // Real per-event speed (ignoring stale gaps / the first move after enter),
+      // low-passed so one jittery sample doesn't spike the whole stream.
+      if (mdt > 0 && mdt < 0.1) {
+        pointer.vx = pointer.vx * 0.55 + ((x - lastMoveX) / mdt) * 0.45
+      }
+      pointer.x = x
+      lastMoveX = x
+      lastMoveT = now
     }
     function onEnter(e: MouseEvent) {
       hovering = true
       fs = parseFloat(getComputedStyle(host).fontSize) || 48
+      // Seed move-tracking at the entry point so the first sample doesn't read
+      // as a huge jump from a stale position.
+      lastMoveX = e.clientX - host.getBoundingClientRect().left
+      lastMoveT = performance.now()
+      pointer.vx = 0
       onMove(e)
       buildMask()
       ensureRunning()
