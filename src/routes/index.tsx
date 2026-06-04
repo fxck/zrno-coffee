@@ -16,7 +16,6 @@ import {
   EASE_OUT,
   Marquee,
   Reveal,
-  ScrollProgress,
   SOFT_SPRING,
   UnderlineLink,
   useParallaxY,
@@ -101,8 +100,6 @@ function Home() {
 
   return (
     <div className="font-body bg-espresso text-cream">
-      <ScrollProgress />
-
       <SiteHeader variant="home" />
 
       {/* HERO */}
@@ -166,8 +163,8 @@ function Home() {
                 <BeanRain
                   lines={['ZRN']}
                   pop
-                  popDelay={0.45}
-                  popStagger={0.15}
+                  popDelay={0.4}
+                  popStagger={0.13}
                   beanScale={0.6}
                 />
                 {reduce ? (
@@ -186,14 +183,14 @@ function Home() {
                   // don't fight; bottom-centre pivot keeps the rain upright.
                   <motion.span
                     className="ml-[0.02em] inline-block"
-                    initial={{ scale: 0.25, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
+                    initial={{ y: '0.5em', opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
                     transition={{
                       type: 'spring',
-                      stiffness: 540,
-                      damping: 12,
-                      mass: 0.8,
-                      delay: 0.9,
+                      stiffness: 300,
+                      damping: 22,
+                      mass: 0.9,
+                      delay: 0.79,
                     }}
                   >
                     <motion.span
@@ -202,11 +199,12 @@ function Home() {
                       initial={{ rotate: -18 }}
                       animate={{ rotate: 0 }}
                       transition={{
+                        // gentle settle — one soft wobble, then rests at the lean
                         type: 'spring',
-                        stiffness: 130,
-                        damping: 7,
+                        stiffness: 150,
+                        damping: 13,
                         mass: 0.9,
-                        delay: 1.25,
+                        delay: 1.2,
                       }}
                     >
                       <BeanRain lines={['O']} whole rotate={18} beanScale={0.6} />
@@ -462,43 +460,47 @@ function Home() {
         </div>
       </section>
 
-      {/* VISIT */}
-      <section id="visit" className="scroll-mt-24 bg-surface grid md:grid-cols-2">
+      {/* VISIT — full-bleed image with the details overlaid at the foot. A
+          deliberate break from the roastery's split-screen rhythm: here the
+          photograph fills the frame and the type sits on top of it. */}
+      <section
+        id="visit"
+        ref={barRef}
+        className="scroll-mt-24 relative flex min-h-[90vh] items-end overflow-hidden"
+      >
+        <motion.div
+          aria-hidden
+          className="absolute inset-[-10%] bg-cover bg-center"
+          style={{
+            backgroundImage: 'url(/bar.jpg)',
+            y: reduce ? 0 : barY,
+            willChange: 'transform',
+          }}
+        />
+        {/* legibility gradient — dense at the foot where the type lives */}
         <div
-          ref={barRef}
-          className="relative min-h-[320px] md:min-h-[560px] overflow-hidden flex items-end p-8"
-        >
-          <motion.div
-            aria-hidden
-            className="absolute inset-[-10%] bg-cover bg-center"
-            style={{
-              backgroundImage: 'url(/bar.jpg)',
-              y: reduce ? 0 : barY,
-              willChange: 'transform',
-            }}
-          />
-          <div
-            aria-hidden
-            className="absolute inset-0"
-            style={{
-              backgroundImage:
-                'linear-gradient(0deg, rgba(11,9,8,0.78) 0%, rgba(11,9,8,0.12) 60%)',
-            }}
-          />
-          <span className="relative z-10 font-mono text-[11px] tracking-[0.2em] text-cream/70">
-            THE BAR · KUBELÍKOVA
-          </span>
-        </div>
-        <div className="flex flex-col justify-between gap-12 p-10 md:p-16 lg:p-24">
-          <Reveal as="div">
-            <div className="font-mono text-xs tracking-[0.2em] text-amber">FIND US</div>
-            <h2 className="font-display t-md mt-4">
-              <BeanRain lines={['VISIT THE BAR']} />
-            </h2>
+          aria-hidden
+          className="absolute inset-0"
+          style={{
+            backgroundImage:
+              'linear-gradient(0deg, rgba(11,9,8,0.95) 0%, rgba(11,9,8,0.6) 40%, rgba(11,9,8,0.12) 100%)',
+          }}
+        />
+
+        <span className="absolute left-6 top-8 z-10 font-mono text-[11px] tracking-[0.2em] text-cream/55 md:left-14">
+          THE BAR · KUBELÍKOVA
+        </span>
+
+        <div className="relative z-10 w-full px-6 pb-14 md:px-14 md:pb-24">
+          <Reveal as="div" className="font-mono text-xs tracking-[0.2em] text-amber">
+            FIND US
           </Reveal>
+          <h2 className="font-display t-lg mt-4">
+            <BeanRain lines={['VISIT THE BAR']} />
+          </h2>
           <Reveal
             as="div"
-            className="grid grid-cols-2 md:grid-cols-3 gap-8"
+            className="mt-10 grid max-w-3xl grid-cols-2 gap-8 border-t hairline pt-8 md:mt-14 md:grid-cols-3"
             stagger
             staggerAmount={0.12}
           >
@@ -509,7 +511,7 @@ function Home() {
                 </div>
                 <div className="mt-3 space-y-1.5">
                   {c.lines.map((ln) => (
-                    <div key={ln} className="text-base">
+                    <div key={ln} className="text-base text-cream/90">
                       {ln}
                     </div>
                   ))}

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { useRouter } from '@tanstack/react-router'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { EASE_OUT } from './motion-primitives'
@@ -61,6 +62,8 @@ export function CommandPalette() {
   const [sel, setSel] = useState(0)
   const [reindexing, setReindexing] = useState(false)
   const [reindexNote, setReindexNote] = useState<string | null>(null)
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
   const inputRef = useRef<HTMLInputElement>(null)
   const listRef = useRef<HTMLDivElement>(null)
   const reqId = useRef(0)
@@ -235,21 +238,27 @@ export function CommandPalette() {
         </kbd>
       </button>
 
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            className="fixed inset-0 z-[100] flex items-start justify-center px-4 pt-[12vh]"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.18, ease: EASE_OUT }}
-          >
-            <button
-              type="button"
-              aria-label="Close search"
-              onClick={() => setOpen(false)}
-              className="absolute inset-0 bg-espresso/75 backdrop-blur-sm"
-            />
+      {/* Portal to <body>: the admin header's backdrop-blur creates a
+          containing block, so a fixed overlay nested inside it would be
+          clipped to the header strip — the blur only showed at the top.
+          Rendering into body escapes that and covers the whole viewport. */}
+      {mounted &&
+        createPortal(
+          <AnimatePresence>
+            {open && (
+              <motion.div
+                className="fixed inset-0 z-[100] flex items-start justify-center px-4 pt-[12vh]"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.18, ease: EASE_OUT }}
+              >
+                <button
+                  type="button"
+                  aria-label="Close search"
+                  onClick={() => setOpen(false)}
+                  className="absolute inset-0 bg-espresso/60 backdrop-blur-md"
+                />
             <motion.div
               role="dialog"
               aria-modal="true"
@@ -350,10 +359,12 @@ export function CommandPalette() {
                   </button>
                 </div>
               </div>
-            </motion.div>
-          </motion.div>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>,
+          document.body,
         )}
-      </AnimatePresence>
     </>
   )
 }

@@ -7,6 +7,7 @@ import { fmtDateTime } from '../../components/admin-bits'
 import {
   useTableControls,
   TableToolbar,
+  TableCount,
   SortTH,
 } from '../../components/table-controls'
 import type { Subscriber } from '../../lib/server/admin'
@@ -35,8 +36,9 @@ function AdminSubscribers() {
 
   return (
     <AdminShell email={data.user.email}>
-      <div className="mb-6">
+      <div className="mb-6 flex items-baseline gap-3">
         <h1 className="font-display text-4xl">SUBSCRIBERS</h1>
+        {data.subscribers.length > 0 && <TableCount controls={controls} />}
       </div>
 
       {data.subscribers.length > 0 && (

@@ -15,6 +15,7 @@ import { Button } from '../../../components/ui/button'
 import {
   useTableControls,
   TableToolbar,
+  TableCount,
   SortTH,
 } from '../../../components/table-controls'
 
@@ -78,8 +79,9 @@ function AdminJournalList() {
         </Link>
       }
     >
-      <div className="mb-6">
+      <div className="mb-6 flex items-baseline gap-3">
         <h1 className="font-display text-4xl">POSTS</h1>
+        {data.posts.length > 0 && <TableCount controls={controls} />}
       </div>
 
       {data.posts.length > 0 && (

@@ -50,7 +50,7 @@ export function SiteHeader({
 
   return (
     <motion.header
-      className="sticky top-0 z-50 flex items-center justify-between gap-4 border-b hairline px-6 md:px-14"
+      className="sticky top-0 z-50 flex items-center gap-4 border-b hairline px-6 md:px-14"
       initial={false}
       animate={{
         paddingTop: scrolled ? 12 : 18,
@@ -63,19 +63,23 @@ export function SiteHeader({
         WebkitBackdropFilter: scrolled ? 'blur(14px)' : 'blur(8px)',
       }}
     >
-      {/* Logo — just the angled bean "O" (the brand mark). */}
-      {isHome ? (
-        <a href="#top" aria-label="ZRNO home" className="shrink-0">
-          <BeanO className="text-[2.35rem] leading-none text-cream" />
-        </a>
-      ) : (
-        <Link to="/" aria-label="ZRNO home" className="shrink-0">
-          <BeanO className="text-[2.35rem] leading-none text-cream" />
-        </Link>
-      )}
+      {/* Logo — just the angled bean "O" (the brand mark). Side columns are
+          equal flex-1 so the centre nav stays dead-centre regardless of the
+          logo or right-button width (count badge, back button, …). */}
+      <div className="flex min-w-0 flex-1 justify-start">
+        {isHome ? (
+          <a href="#top" aria-label="ZRNO home" className="shrink-0">
+            <BeanO className="text-[2.35rem] leading-none text-cream" />
+          </a>
+        ) : (
+          <Link to="/" aria-label="ZRNO home" className="shrink-0">
+            <BeanO className="text-[2.35rem] leading-none text-cream" />
+          </Link>
+        )}
+      </div>
 
       {/* Center nav — scrollspy active state on home, cross-page anchors elsewhere */}
-      <nav className="hidden md:flex items-center gap-1 font-mono text-[11px] tracking-[0.18em]">
+      <nav className="hidden md:flex shrink-0 items-center gap-1 font-mono text-[11px] tracking-[0.18em]">
         {SECTIONS.map(({ label, id }) => {
           const isActive = isHome && active === id
           return (
@@ -105,7 +109,10 @@ export function SiteHeader({
         })}
       </nav>
 
-      {/* Right slot — fixed-height CTA so the bar is the same height everywhere */}
+      {/* Right slot — fixed-height CTA so the bar is the same height everywhere.
+          flex-1 + justify-end mirrors the logo column, so its varying width
+          (ORDER vs ORDER·total, or the back button) never moves the nav. */}
+      <div className="flex min-w-0 flex-1 justify-end">
       {back ? (
         <Link
           to={backTo}
@@ -161,6 +168,7 @@ export function SiteHeader({
           </Link>
         </MagneticButton>
       )}
+      </div>
     </motion.header>
   )
 }

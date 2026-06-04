@@ -341,20 +341,20 @@ export function BeanRain({
         const start = charBase
         charBase += text.length
 
-        // Pop each glyph in with a springy overshoot (transform-origin centre),
-        // staggered. Otherwise render the plain text node.
+        // Rise each glyph into place, staggered — a near-critically-damped
+        // spring (confident settle, no bouncy scale). Otherwise plain text.
         const inner = usePop
           ? text.split('').map((ch, j) => (
               <motion.span
                 key={j}
                 className="inline-block"
-                initial={{ scale: 0.25, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
+                initial={{ y: '0.5em', opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
                 transition={{
                   type: 'spring',
-                  stiffness: 540,
-                  damping: 12,
-                  mass: 0.8,
+                  stiffness: 300,
+                  damping: 22,
+                  mass: 0.9,
                   delay: popDelay + (start + j) * popStagger,
                 }}
               >

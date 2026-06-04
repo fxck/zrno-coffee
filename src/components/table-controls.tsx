@@ -149,14 +149,20 @@ export function TableToolbar<T>({
           options={[{ value: 'all', label: 'All' }, ...f.options]}
         />
       ))}
-
-      <span className="ml-auto font-mono text-[11px] text-muted">
-        {controls.shown === controls.total
-          ? `${controls.total} total`
-          : `${controls.shown} of ${controls.total}`}
-      </span>
       {children}
     </div>
+  )
+}
+
+// Compact count for the page title row — "17" normally, "3 / 17" when filtered.
+// Lives next to the <h1> so it never disturbs the filter-bar baseline.
+export function TableCount<T>({ controls }: { controls: TableControls<T> }) {
+  return (
+    <span className="font-mono text-sm text-muted tabular-nums">
+      {controls.shown === controls.total
+        ? controls.total
+        : `${controls.shown} / ${controls.total}`}
+    </span>
   )
 }
 

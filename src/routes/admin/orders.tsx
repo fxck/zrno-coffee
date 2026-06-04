@@ -10,6 +10,7 @@ import { OrderStatus, fmtDateTime } from '../../components/admin-bits'
 import {
   useTableControls,
   TableToolbar,
+  TableCount,
   SortTH,
 } from '../../components/table-controls'
 import type { Order } from '../../lib/server/admin'
@@ -73,8 +74,9 @@ function AdminOrders() {
 
   return (
     <AdminShell email={data.user.email}>
-      <div className="mb-6">
+      <div className="mb-6 flex items-baseline gap-3">
         <h1 className="font-display text-4xl">ORDERS</h1>
+        {data.orders.length > 0 && <TableCount controls={controls} />}
       </div>
 
       {data.orders.length > 0 && (

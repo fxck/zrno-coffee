@@ -44,8 +44,9 @@ export function MenuAddControl({
 
   return (
     <div className="relative h-10 w-[116px] md:w-[128px]">
-      {/* Right-anchored, vertically centred, out of flow. */}
-      <div className="absolute inset-y-0 right-0 flex items-center">
+      {/* Centred in a fixed-width slot, out of flow — so the ADD ⇄ stepper
+          morph never shifts the row AND the pill isn't glued to the edge. */}
+      <div className="absolute inset-0 flex items-center justify-center">
         <AnimatePresence mode="wait" initial={false}>
           {inCart ? (
             <motion.div
