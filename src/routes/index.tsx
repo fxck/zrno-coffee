@@ -129,11 +129,11 @@ function Home() {
           className="absolute inset-0"
           style={{
             backgroundImage:
-              'linear-gradient(180deg, rgba(11,9,8,0.55) 0%, rgba(11,9,8,0.08) 22%, rgba(11,9,8,0) 48%, rgba(11,9,8,0.8) 86%, rgba(11,9,8,1) 100%)',
+              'linear-gradient(180deg, rgba(11,9,8,0.72) 0%, rgba(11,9,8,0.5) 32%, rgba(11,9,8,0.52) 60%, rgba(11,9,8,0.9) 90%, rgba(11,9,8,1) 100%)',
           }}
         />
         <motion.div
-          className="relative z-10 flex min-h-[86vh] flex-col justify-between pt-16"
+          className="relative z-10 flex min-h-[100svh] flex-col justify-between pt-16 pb-[4vh]"
           style={{ y: reduce ? 0 : heroContentY, opacity: reduce ? 1 : heroFade }}
         >
           <motion.div
