@@ -69,7 +69,6 @@ export function BeanRain({
     let fs = 48 // cached font size (px) — refreshed on resize/enter, never per-frame
     let beans: Bean[] = []
     let mask: HTMLCanvasElement | null = null
-    const pointer = { x: -9999, y: -9999 }
     let hovering = false
     let hoverAlpha = 0
     let raf = 0
@@ -175,51 +174,32 @@ export function BeanRain({
         if (b.y - b.len > height) resetBean(b, true, i)
       }
 
-      // Clear is cheap (memset); the costly compositing is bounded to the cloud.
+      // Clear is cheap (memset).
       ctx!.setTransform(1, 0, 0, 1, 0, 0)
       ctx!.clearRect(0, 0, canvas.width, canvas.height)
 
-      const crCss = Math.max(44, Math.min(150, fs * 0.62))
       if (hoverAlpha > 0.01 && mask) {
-        // device-pixel box around the pointer
-        const bx = Math.max(0, Math.floor((pointer.x - crCss) * dpr))
-        const by = Math.max(0, Math.floor((pointer.y - crCss) * dpr))
-        const bw = Math.min(canvas.width - bx, Math.ceil(crCss * 2 * dpr))
-        const bh = Math.min(canvas.height - by, Math.ceil(crCss * 2 * dpr))
-
-        if (bw > 0 && bh > 0) {
-          // 1) draw only the beans near the cursor (css-space transform)
-          ctx!.setTransform(dpr, 0, 0, dpr, 0, 0)
-          for (let i = 0; i < beans.length; i++) {
-            const b = beans[i]
-            if (
-              Math.abs(b.x - pointer.x) > crCss + b.len ||
-              Math.abs(b.y - pointer.y) > crCss + b.len
-            )
-              continue
-            ctx!.save()
-            ctx!.translate(b.x, b.y)
-            ctx!.rotate(b.rot)
-            ctx!.fillStyle = b.deep ? AMBERDEEP : AMBER
-            beanPath(b.len)
-            ctx!.fill('evenodd')
-            ctx!.restore()
-          }
-          // 2) clip to glyphs — only the cloud box of the mask
-          ctx!.setTransform(1, 0, 0, 1, 0, 0)
-          ctx!.globalCompositeOperation = 'destination-in'
-          ctx!.drawImage(mask, bx, by, bw, bh, bx, by, bw, bh)
-          // 3) clip to the cursor cloud
-          const cx = pointer.x * dpr
-          const cy = pointer.y * dpr
-          const grad = ctx!.createRadialGradient(cx, cy, 0, cx, cy, crCss * dpr)
-          grad.addColorStop(0, `rgba(0,0,0,${hoverAlpha})`)
-          grad.addColorStop(0.55, `rgba(0,0,0,${hoverAlpha})`)
-          grad.addColorStop(1, 'rgba(0,0,0,0)')
-          ctx!.fillStyle = grad
-          ctx!.fillRect(bx, by, bw, bh)
-          ctx!.globalCompositeOperation = 'source-over'
+        // Rain falls across the whole headline and into every letter — the
+        // word fills with falling beans (fading in/out with hover). The
+        // glyph mask is the only clip; no cursor spotlight.
+        ctx!.setTransform(dpr, 0, 0, dpr, 0, 0)
+        ctx!.globalAlpha = hoverAlpha
+        for (let i = 0; i < beans.length; i++) {
+          const b = beans[i]
+          ctx!.save()
+          ctx!.translate(b.x, b.y)
+          ctx!.rotate(b.rot)
+          ctx!.fillStyle = b.deep ? AMBERDEEP : AMBER
+          beanPath(b.len)
+          ctx!.fill('evenodd')
+          ctx!.restore()
         }
+        ctx!.globalAlpha = 1
+        // clip to the glyph shapes
+        ctx!.setTransform(1, 0, 0, 1, 0, 0)
+        ctx!.globalCompositeOperation = 'destination-in'
+        ctx!.drawImage(mask, 0, 0)
+        ctx!.globalCompositeOperation = 'source-over'
       }
 
       if (hovering || hoverAlpha > 0.01) {
@@ -229,15 +209,9 @@ export function BeanRain({
       }
     }
 
-    function onMove(e: MouseEvent) {
-      const r = host.getBoundingClientRect()
-      pointer.x = e.clientX - r.left
-      pointer.y = e.clientY - r.top
-    }
-    function onEnter(e: MouseEvent) {
+    function onEnter() {
       hovering = true
       fs = parseFloat(getComputedStyle(host).fontSize) || 48
-      onMove(e)
       buildMask()
       if (!raf) {
         lastT = performance.now()
@@ -251,13 +225,11 @@ export function BeanRain({
     const ro = new ResizeObserver(() => resize())
     ro.observe(host)
     resize()
-    host.addEventListener('mousemove', onMove)
     host.addEventListener('mouseenter', onEnter)
     host.addEventListener('mouseleave', onLeave)
 
     return () => {
       ro.disconnect()
-      host.removeEventListener('mousemove', onMove)
       host.removeEventListener('mouseenter', onEnter)
       host.removeEventListener('mouseleave', onLeave)
       if (raf) cancelAnimationFrame(raf)

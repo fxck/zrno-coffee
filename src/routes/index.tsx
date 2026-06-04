@@ -166,13 +166,14 @@ function Home() {
                 ) : (
                   <motion.span
                     className="inline-block"
-                    style={{ transformOrigin: '50% 55%' }}
+                    style={{ transformOrigin: '50% 100%' }}
                     initial={{ rotate: 0 }}
                     animate={{ rotate: 18 }}
                     transition={{ duration: 0.9, ease: EASE_OUT, delay: 1.15 }}
                   >
-                    {/* starts upright as the "O", then tips to the bean angle
-                        once — and stays there. No perpetual motion. */}
+                    {/* starts upright, then tips off its base (bottom-centre
+                        pivot — as if losing balance) to the bean angle once,
+                        and stays there. No perpetual motion. */}
                     <BeanO angle={0} className="ml-[0.02em]" />
                   </motion.span>
                 )}
@@ -183,7 +184,7 @@ function Home() {
       </section>
 
       {/* STATEMENT */}
-      <section className="px-6 md:px-14 py-28 md:py-44">
+      <section className="px-6 md:px-14 py-40 md:py-60">
         <Reveal as="div" className="flex items-center gap-3 font-mono text-xs tracking-[0.2em] text-taupe">
           <motion.span
             className="text-amber text-base leading-none"
@@ -205,7 +206,7 @@ function Home() {
       <Marquee items={MARQUEE} speed={42} />
 
       {/* MENU */}
-      <section id="menu" className="scroll-mt-24 bg-surface px-6 md:px-14 py-24 md:py-32">
+      <section id="menu" className="scroll-mt-24 bg-surface px-6 md:px-14 py-32 md:py-48">
         <Reveal as="div" className="flex items-end justify-between flex-wrap gap-6" stagger>
           <div>
             <div className="font-mono text-xs tracking-[0.2em] text-amber">
@@ -220,7 +221,7 @@ function Home() {
           </div>
         </Reveal>
 
-        <div className="mt-12 md:mt-16">
+        <div className="mt-16 md:mt-24">
           {MENU.map((it, i) => (
             <motion.div
               key={it.id}
@@ -230,7 +231,7 @@ function Home() {
               viewport={{ once: true, amount: 0.4 }}
               transition={{ duration: 0.7, ease: EASE_OUT, delay: Math.min(i * 0.06, 0.3) }}
             >
-              <div className="group/row flex items-center justify-between gap-5 py-6 md:py-7">
+              <div className="group/row flex items-center justify-between gap-5 py-7 md:py-9">
                 <div className="flex items-end gap-5 flex-wrap min-w-0">
                   <BeanRain
                     lines={[it.name.toUpperCase()]}
@@ -339,7 +340,7 @@ function Home() {
         {/* Text — quote, attribution, fact strip, journal link.
             min-w-0 lets the column shrink below its content's intrinsic width
             so the quote wraps instead of overflowing the viewport. */}
-        <div className="md:order-1 flex min-w-0 flex-col justify-center gap-8 p-8 md:p-14 lg:p-16">
+        <div className="md:order-1 flex min-w-0 flex-col justify-center gap-10 p-10 md:p-16 lg:p-24">
           <Reveal
             as="div"
             className="flex items-center gap-4 font-mono text-xs tracking-[0.2em] text-amber"
@@ -428,7 +429,7 @@ function Home() {
             THE BAR · KUBELÍKOVA
           </span>
         </div>
-        <div className="flex flex-col justify-between gap-12 p-8 md:p-16">
+        <div className="flex flex-col justify-between gap-12 p-10 md:p-16 lg:p-24">
           <Reveal as="div">
             <div className="font-mono text-xs tracking-[0.2em] text-amber">FIND US</div>
             <h2 className="font-display t-md mt-4">
@@ -460,7 +461,7 @@ function Home() {
       </section>
 
       {/* FOOTER */}
-      <footer className="px-6 md:px-14 pt-28 md:pt-40 pb-10">
+      <footer className="px-6 md:px-14 pt-40 md:pt-56 pb-12">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-12">
           <h2 className="font-display t-xl">
             <BeanRain lines={['STAY', 'CAFFEINATED.']} />
