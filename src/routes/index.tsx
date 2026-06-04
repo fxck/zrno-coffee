@@ -244,7 +244,7 @@ function Home() {
       <Marquee items={MARQUEE} speed={42} />
 
       {/* MENU */}
-      <section id="menu" className="scroll-mt-24 bg-surface px-6 md:px-14 py-32 md:py-48">
+      <section id="menu" className="scroll-mt-24 px-6 md:px-14 py-32 md:py-48">
         <Reveal as="div" className="flex items-end justify-between flex-wrap gap-6" stagger>
           <div>
             <div className="font-mono text-xs tracking-[0.2em] text-amber">
@@ -491,11 +491,12 @@ function Home() {
             <source src="/bar.mp4" type="video/mp4" />
           </video>
         </motion.div>
-        {/* Black appears ONLY at the foot: the gradient is fully transparent
-            across the top ~30% (video stays clean) and resolves to the page
-            background at the very bottom, so the video dissolves DOWN into the
-            footer. The page-colour whitespace above (section margin) needs no
-            paint here. */}
+        {/* Flat dark veil — knocks the (bright) video down a couple of stops
+            so it sits in the dark palette instead of glaring. */}
+        <div aria-hidden className="absolute inset-0 bg-espresso/40" />
+        {/* Black appears ONLY at the foot: transparent across the top, then
+            resolves to the page background at the very bottom so the video
+            dissolves DOWN into the footer. */}
         <div
           aria-hidden
           className="absolute inset-0"
@@ -504,16 +505,16 @@ function Home() {
               'linear-gradient(0deg, rgba(11,9,8,1) 0%, rgba(11,9,8,0.88) 14%, rgba(11,9,8,0.42) 42%, rgba(11,9,8,0) 72%)',
           }}
         />
-        {/* Film grain ON TOP of everything (after the gradient) so it's always
-            visible — resolution-independent SVG noise, sharp at device pixels,
-            making the upscaled video read as filmic texture, not low-res blur. */}
+        {/* Film grain ON TOP — multiply so it reads as DARK speckle (black-
+            tinted), pronounced enough to mask the upscale. Resolution-
+            independent SVG noise, sharp at device pixels. */}
         <div
           aria-hidden
-          className="absolute inset-0 opacity-[0.28] mix-blend-overlay"
+          className="absolute inset-0 opacity-[0.5] mix-blend-multiply"
           style={{
             backgroundImage:
-              "url(\"data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='120'%20height='120'%3E%3Cfilter%20id='n'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='0.9'%20numOctaves='3'%20stitchTiles='stitch'/%3E%3C/filter%3E%3Crect%20width='100%25'%20height='100%25'%20filter='url(%23n)'/%3E%3C/svg%3E\")",
-            backgroundSize: '120px 120px',
+              "url(\"data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='110'%20height='110'%3E%3Cfilter%20id='n'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='0.95'%20numOctaves='3'%20stitchTiles='stitch'/%3E%3C/filter%3E%3Crect%20width='100%25'%20height='100%25'%20filter='url(%23n)'/%3E%3C/svg%3E\")",
+            backgroundSize: '110px 110px',
           }}
         />
 
