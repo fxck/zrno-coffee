@@ -9,10 +9,11 @@ import {
 } from 'motion/react'
 import { MENU } from '../lib/menu'
 import { useCart } from '../lib/cart'
-import { FloatingCart } from '../components/floating-cart'
 import { SiteHeader } from '../components/site-header'
+import { Wordmark } from '../components/bean-mark'
 import { MenuAddControl } from '../components/menu-add-control'
 import {
+  BeanfallText,
   EASE_OUT,
   Marquee,
   MaskedLines,
@@ -99,7 +100,6 @@ function Home() {
   return (
     <div className="font-body bg-espresso text-cream">
       <ScrollProgress />
-      <FloatingCart />
 
       <SiteHeader variant="home" />
 
@@ -184,8 +184,9 @@ function Home() {
           OUR PHILOSOPHY
         </Reveal>
         <h2 className="font-display t-xl mt-10">
-          <MaskedLines
+          <BeanfallText
             lines={['BREWED FOR', <span className="text-amber">THE BOLD.</span>]}
+            clip={['BREWED FOR', 'THE BOLD.']}
             stagger={0.14}
           />
         </h2>
@@ -240,13 +241,15 @@ function Home() {
         </div>
       </section>
 
-      {/* STORY / ROASTERY — full-bleed left/right split (mirrors VISIT) */}
+      {/* STORY / ROASTERY — full-bleed split. Image sits on the RIGHT on
+          desktop so it alternates with VISIT (image-left) for a zigzag
+          rhythm; on mobile both stack image-first. */}
       <section id="story" className="scroll-mt-24 grid md:grid-cols-2">
         {/* Image — full-bleed, parallax, overlaid index numeral + captions */}
         <div
           id="roastery"
           ref={roastRef}
-          className="scroll-mt-24 relative min-h-[420px] md:min-h-[620px] overflow-hidden flex flex-col justify-between p-8"
+          className="scroll-mt-24 md:order-2 relative min-h-[420px] md:min-h-[620px] overflow-hidden flex flex-col justify-between p-8"
         >
           {/* Parallax wrapper holding the crossfading carousel images */}
           <motion.div
@@ -324,7 +327,7 @@ function Home() {
         {/* Text — quote, attribution, fact strip, journal link.
             min-w-0 lets the column shrink below its content's intrinsic width
             so the quote wraps instead of overflowing the viewport. */}
-        <div className="flex min-w-0 flex-col justify-center gap-8 p-8 md:p-14 lg:p-16">
+        <div className="md:order-1 flex min-w-0 flex-col justify-center gap-8 p-8 md:p-14 lg:p-16">
           <Reveal
             as="div"
             className="flex items-center gap-4 font-mono text-xs tracking-[0.2em] text-amber"
@@ -417,7 +420,7 @@ function Home() {
           <Reveal as="div">
             <div className="font-mono text-xs tracking-[0.2em] text-amber">FIND US</div>
             <h2 className="font-display t-md mt-4">
-              <MaskedLines lines={['VISIT THE BAR']} duration={0.85} />
+              <BeanfallText lines={['VISIT THE BAR']} duration={0.85} />
             </h2>
           </Reveal>
           <Reveal
@@ -448,7 +451,7 @@ function Home() {
       <footer className="px-6 md:px-14 pt-28 md:pt-40 pb-10">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-12">
           <h2 className="font-display t-xl">
-            <MaskedLines lines={['STAY', 'CAFFEINATED.']} stagger={0.14} />
+            <BeanfallText lines={['STAY', 'CAFFEINATED.']} stagger={0.14} />
           </h2>
           <Reveal as="div" className="max-w-md w-full" delay={0.1}>
             <p className="text-taupe leading-relaxed">
@@ -549,11 +552,19 @@ function Home() {
         </div>
 
         <div className="border-t hairline mt-16 pt-7 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 font-mono text-[11px] tracking-wide text-muted">
-          <span className="font-display text-xl tracking-wider text-cream">ZRNO</span>
+          <Wordmark className="text-xl text-cream" />
           <span>© 2026 ZRNO COFFEE — PRAGUE</span>
-          <UnderlineLink href="#top" className="text-taupe">
-            BACK TO TOP ↑
-          </UnderlineLink>
+          <div className="flex items-center gap-6">
+            <Link
+              to="/admin"
+              className="zrno-underline relative text-muted hover:text-taupe transition-colors"
+            >
+              ADMIN
+            </Link>
+            <UnderlineLink href="#top" className="text-taupe">
+              BACK TO TOP ↑
+            </UnderlineLink>
+          </div>
         </div>
       </footer>
     </div>

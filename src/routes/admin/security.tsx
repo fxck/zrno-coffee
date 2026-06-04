@@ -1,7 +1,8 @@
-import { createFileRoute, redirect, Link } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 import { getAdminSession } from '../../lib/server/admin'
 import { authClient } from '../../lib/auth-client'
+import { AdminShell } from '../../components/admin-shell'
 import { Card } from '../../components/ui/card'
 import { Button } from '../../components/ui/button'
 import { Input, Label } from '../../components/ui/input'
@@ -37,26 +38,8 @@ function Security() {
   const { user } = Route.useLoaderData()
 
   return (
-    <div className="min-h-screen bg-espresso text-cream font-body">
-      <header className="flex items-center justify-between px-6 md:px-12 py-5 border-b border-muted/15">
-        <div className="flex items-baseline gap-4">
-          <Link to="/" className="font-display text-2xl tracking-wider">
-            ZRNO
-          </Link>
-          <span className="font-mono text-[11px] tracking-[0.2em] text-taupe">BACK OFFICE</span>
-        </div>
-        <div className="flex items-center gap-5">
-          <Link
-            to="/admin/dashboard"
-            className="font-mono text-[11px] tracking-[0.18em] uppercase text-taupe hover:text-cream transition-colors"
-          >
-            ← Dashboard
-          </Link>
-          <span className="font-mono text-[11px] text-muted hidden sm:inline">{user.email}</span>
-        </div>
-      </header>
-
-      <main className="px-6 md:px-12 py-10 md:py-14 max-w-2xl mx-auto space-y-12">
+    <AdminShell email={user.email} title="SECURITY">
+      <div className="max-w-2xl mx-auto space-y-12">
         <div>
           <div className="font-mono text-xs tracking-[0.2em] text-amber uppercase">Account</div>
           <h1 className="font-display text-4xl md:text-5xl mt-3">SECURITY</h1>
@@ -68,8 +51,8 @@ function Security() {
 
         <ChangePassword />
         <Passkeys />
-      </main>
-    </div>
+      </div>
+    </AdminShell>
   )
 }
 

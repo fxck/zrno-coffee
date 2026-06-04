@@ -357,6 +357,37 @@ function SummaryStep({
 }
 
 function Confirmation({ result, stripeOn }: { result: OrderResult; stripeOn: boolean }) {
+  // Permanent, link-by-id order page. Encoded into a QR so the customer can
+  // pull up their receipt anytime — and so staff can scan it to mark the
+  // order delivered (the /o/$id page shows a "mark delivered" control to a
+  // logged-in admin). Built on the client so we have window.location.origin.
+  const [orderUrl, setOrderUrl] = useState('')
+  const [qr, setQr] = useState('')
+
+  useEffect(() => {
+    const url = `${window.location.origin}/o/${result.orderId}`
+    setOrderUrl(url)
+    let alive = true
+    // Lazy-load qrcode so it never weighs on the rest of the app's bundle.
+    // qrcode is CommonJS — grab the default export under ESM interop.
+    import('qrcode')
+      .then((mod) => {
+        const QR = (mod as any).default ?? mod
+        return QR.toDataURL(url, {
+          margin: 1,
+          width: 240,
+          color: { dark: '#0b0908', light: '#f4ece0' },
+        }) as Promise<string>
+      })
+      .then((dataUrl) => {
+        if (alive) setQr(dataUrl)
+      })
+      .catch(() => {})
+    return () => {
+      alive = false
+    }
+  }, [result.orderId])
+
   return (
     <main className="px-6 md:px-14 py-24 max-w-2xl">
       <div className="font-mono text-xs tracking-[0.2em] text-amber">
@@ -371,6 +402,41 @@ function Confirmation({ result, stripeOn }: { result: OrderResult; stripeOn: boo
         {stripeOn ? 'Total charged:' : 'Order total:'}{' '}
         <span className="text-amber">{result.total} Kč</span>.
       </p>
+
+      {/* QR → permanent order link. Cream card so the code stays scannable. */}
+      <div className="mt-10 flex flex-col sm:flex-row sm:items-center gap-6 border border-muted/20 bg-surface p-5 md:p-6">
+        <div className="shrink-0 rounded-md bg-cream p-3">
+          {qr ? (
+            <img
+              src={qr}
+              alt="QR code linking to your order"
+              width={120}
+              height={120}
+              className="h-[120px] w-[120px]"
+            />
+          ) : (
+            <div className="h-[120px] w-[120px] animate-pulse rounded bg-muted/30" />
+          )}
+        </div>
+        <div className="min-w-0">
+          <div className="font-mono text-[11px] tracking-[0.2em] text-amber">
+            YOUR ORDER PASS
+          </div>
+          <p className="text-taupe text-sm mt-2 leading-relaxed">
+            Scan or save this to pull up your order anytime. Show it at the bar
+            to collect.
+          </p>
+          {orderUrl && (
+            <a
+              href={orderUrl}
+              className="zrno-underline relative mt-3 inline-block break-all font-mono text-[11px] text-cream"
+            >
+              {orderUrl.replace(/^https?:\/\//, '')}
+            </a>
+          )}
+        </div>
+      </div>
+
       <div className="flex gap-4 mt-10">
         <Link to="/">
           <Button variant="outline">Back to site</Button>

@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { useCart, cartSummary } from '../lib/cart'
+import { Wordmark } from './bean-mark'
 import {
   EASE_OUT,
   MagneticButton,
@@ -46,7 +47,7 @@ export function SiteHeader({
   // Scrollspy only runs on the landing page (the only place the sections live).
   const active = useActiveSection(isHome ? SECTION_IDS : [])
   const cart = useCart()
-  const { count } = cartSummary(cart)
+  const { count, total } = cartSummary(cart)
 
   return (
     <motion.header
@@ -63,14 +64,15 @@ export function SiteHeader({
         WebkitBackdropFilter: scrolled ? 'blur(14px)' : 'blur(8px)',
       }}
     >
-      {/* Wordmark — anchors home (on the landing page, to the very top) */}
+      {/* Wordmark — anchors home (on the landing page, to the very top).
+          The O is the angled bean mark (shared identity). */}
       {isHome ? (
-        <a href="#top" className="font-display text-2xl tracking-wider shrink-0">
-          ZRNO
+        <a href="#top" className="shrink-0">
+          <Wordmark className="text-2xl text-cream" />
         </a>
       ) : (
-        <Link to="/" className="font-display text-2xl tracking-wider shrink-0">
-          ZRNO
+        <Link to="/" className="shrink-0">
+          <Wordmark className="text-2xl text-cream" />
         </Link>
       )}
 
@@ -121,7 +123,29 @@ export function SiteHeader({
             className="zrno-cta relative inline-flex items-center gap-2 bg-amber text-espresso font-mono text-[11px] tracking-[0.18em] px-5 py-3 hover:bg-amberdeep transition-colors duration-300 shrink-0"
           >
             ORDER
-            <span className="hidden sm:inline">ONLINE</span>
+            {/* When the cart has items the button becomes the cart itself —
+                showing the live total — so there's one order control, not a
+                header button AND a floating pill saying the same thing. */}
+            {count > 0 ? (
+              <span className="tabular-nums overflow-hidden">
+                ·{' '}
+                <AnimatePresence mode="popLayout" initial={false}>
+                  <motion.span
+                    key={total}
+                    initial={reduce ? false : { y: '70%', opacity: 0 }}
+                    animate={{ y: '0%', opacity: 1 }}
+                    exit={reduce ? { opacity: 0 } : { y: '-70%', opacity: 0 }}
+                    transition={{ duration: 0.32, ease: EASE_OUT }}
+                    className="inline-block"
+                  >
+                    {total}
+                  </motion.span>
+                </AnimatePresence>{' '}
+                Kč
+              </span>
+            ) : (
+              <span className="hidden sm:inline">ONLINE</span>
+            )}
             <AnimatePresence>
               {count > 0 && (
                 <motion.span

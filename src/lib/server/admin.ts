@@ -13,6 +13,7 @@ export type Order = {
   currency: string
   status: string
   created_at: string
+  delivered_at: string | null
 }
 export type Subscriber = { id: string; email: string; created_at: string }
 
@@ -28,7 +29,7 @@ export const getDashboard = createServerFn({ method: 'GET' }).handler(async () =
 
   const orders = (
     await getPool().query(
-      `SELECT id, customer_name, email, items, total, currency, status, created_at
+      `SELECT id, customer_name, email, items, total, currency, status, created_at, delivered_at
        FROM orders ORDER BY created_at DESC LIMIT 100`,
     )
   ).rows as Order[]

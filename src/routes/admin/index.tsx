@@ -1,6 +1,7 @@
 import { createFileRoute, useRouter, Link } from '@tanstack/react-router'
 import { useState } from 'react'
 import { authClient } from '../../lib/auth-client'
+import { Wordmark } from '../../components/bean-mark'
 import { Button } from '../../components/ui/button'
 import { Input, Label } from '../../components/ui/input'
 
@@ -44,8 +45,8 @@ function AdminLogin() {
   return (
     <div className="min-h-screen bg-espresso text-cream font-body flex flex-col">
       <header className="px-6 md:px-14 py-5">
-        <Link to="/" className="font-display text-2xl tracking-wider">
-          ZRNO
+        <Link to="/" aria-label="ZRNO home">
+          <Wordmark className="text-2xl text-cream" />
         </Link>
       </header>
       <main className="flex-1 flex items-center justify-center px-6">

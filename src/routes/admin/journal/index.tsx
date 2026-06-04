@@ -6,6 +6,8 @@ import {
   deletePost,
   type PostListItem,
 } from '../../../lib/server/blog'
+import { AdminShell } from '../../../components/admin-shell'
+import { fmtDate } from '../../../components/admin-bits'
 import { Card } from '../../../components/ui/card'
 import { Table, THead, TBody, TR, TH, TD } from '../../../components/ui/table'
 import { Badge } from '../../../components/ui/badge'
@@ -19,15 +21,6 @@ export const Route = createFileRoute('/admin/journal/')({
   },
   component: AdminJournalList,
 })
-
-function fmtDate(s: string | null) {
-  if (!s) return '—'
-  return new Date(s).toLocaleDateString('en-GB', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  })
-}
 
 function AdminJournalList() {
   const data = Route.useLoaderData()
@@ -52,34 +45,20 @@ function AdminJournalList() {
   }
 
   return (
-    <div className="min-h-screen bg-espresso text-cream font-body">
-      <header className="flex items-center justify-between px-6 md:px-12 py-5 border-b border-muted/15">
-        <div className="flex items-baseline gap-4">
-          <Link to="/" className="font-display text-2xl tracking-wider">
-            ZRNO
-          </Link>
-          <span className="font-mono text-[11px] tracking-[0.2em] text-taupe">JOURNAL</span>
-        </div>
-        <div className="flex items-center gap-5">
-          <Link
-            to="/admin/dashboard"
-            className="font-mono text-[11px] tracking-[0.18em] uppercase text-taupe hover:text-cream transition-colors"
-          >
-            Dashboard
-          </Link>
-          <Link to="/admin/journal/new">
-            <Button size="sm">New post</Button>
-          </Link>
-        </div>
-      </header>
+    <AdminShell
+      title="JOURNAL"
+      actions={
+        <Link to="/admin/journal/new">
+          <Button size="sm">New post</Button>
+        </Link>
+      }
+    >
+      <div className="flex items-end justify-between mb-6">
+        <h1 className="font-display text-4xl">POSTS</h1>
+        <span className="font-mono text-[11px] text-muted">{data.posts.length} total</span>
+      </div>
 
-      <main className="px-6 md:px-12 py-10">
-        <div className="flex items-end justify-between mb-6">
-          <h1 className="font-display text-4xl">POSTS</h1>
-          <span className="font-mono text-[11px] text-muted">{data.posts.length} total</span>
-        </div>
-
-        <Card className="p-2">
+      <Card className="p-2">
           {data.posts.length === 0 ? (
             <div className="p-10 text-center">
               <p className="text-taupe">No posts yet.</p>
@@ -158,8 +137,7 @@ function AdminJournalList() {
               </TBody>
             </Table>
           )}
-        </Card>
-      </main>
-    </div>
+      </Card>
+    </AdminShell>
   )
 }

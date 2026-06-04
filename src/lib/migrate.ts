@@ -41,6 +41,12 @@ async function run() {
       created_at timestamptz NOT NULL DEFAULT now()
     );
   `)
+  // Delivery tracking (added later): an order is "delivered" once an admin
+  // scans its QR / marks it. Kept separate from the payment `status` so a
+  // paid order can still be pending-delivery. IF NOT EXISTS → safe re-run.
+  await getPool().query(
+    `ALTER TABLE orders ADD COLUMN IF NOT EXISTS delivered_at timestamptz;`,
+  )
 
   // Journal / blog posts. Admin-authored editorial content (Tiptap HTML).
   await getPool().query(`
