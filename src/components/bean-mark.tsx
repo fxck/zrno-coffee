@@ -1,57 +1,32 @@
 import { useId } from 'react'
 
 /* ------------------------------------------------------------------ *
- * BeanMark — the ZRNO "O", angled, used as the logo glyph.
- *
- * Anton's "O" is a tall capsule with a capsule cut-out — which, tipped
- * to the right, reads as a roasted coffee bean. We rebuild it as an SVG
- * (capsule minus capsule, punched with a mask so the hole is genuinely
- * transparent over any background) so it can sit inline in the wordmark,
- * scale to any size, and tint via currentColor.
- *
- * The viewBox (120×160) is sized so the rotated capsule fills it almost
- * edge-to-edge — no dead padding — so a caller can size the box to the
- * cap height and the bean lands at the right visual weight.
+ * BeanO — the actual Anton "O", tipped to the right so it reads as a
+ * roasted bean. Because it's the real font glyph, it's exactly the same
+ * size and weight as the surrounding caps (no SVG/viewBox shrinkage).
+ * This is the logo mark used on its own in the app bars.
  * ------------------------------------------------------------------ */
-export function BeanMark({
+export function BeanO({
   className,
   angle = 18,
-  title,
 }: {
   className?: string
   angle?: number
-  title?: string
 }) {
-  // useId → unique mask id so multiple marks on a page don't collide.
-  const maskId = 'beanmask-' + useId().replace(/:/g, '')
   return (
-    <svg
-      viewBox="0 0 120 160"
-      className={className}
-      role={title ? 'img' : undefined}
-      aria-label={title}
-      aria-hidden={title ? undefined : true}
+    <span
+      aria-hidden
+      className={'inline-block font-display ' + (className ?? '')}
+      style={{ transform: `rotate(${angle}deg)`, transformOrigin: '50% 55%' }}
     >
-      <defs>
-        <mask id={maskId}>
-          <rect width="120" height="160" fill="black" />
-          <g transform={`rotate(${angle} 60 80)`}>
-            <rect x="25" y="11" width="70" height="138" rx="35" fill="white" />
-            <rect x="51" y="46" width="18" height="68" rx="9" fill="black" />
-          </g>
-        </mask>
-      </defs>
-      <rect width="120" height="160" fill="currentColor" mask={`url(#${maskId})`} />
-    </svg>
+      O
+    </span>
   )
 }
 
 /* ------------------------------------------------------------------ *
- * Wordmark — "ZRN" + the angled bean as the O, at full cap height.
- *
- * items-baseline + a box sized to the cap height makes the bean sit in
- * the same band as the caps (baseline → cap height), so it reads as a
- * real letter, not a shrunken icon.
+ * Wordmark — "ZRN" + the angled "O" bean, all real font glyphs at one
+ * size. Used where the full brand is spelled out (hero, footer, ticket).
  * ------------------------------------------------------------------ */
 export function Wordmark({ className }: { className?: string }) {
   return (
@@ -63,7 +38,36 @@ export function Wordmark({ className }: { className?: string }) {
       aria-label="ZRNO"
     >
       <span aria-hidden>ZRN</span>
-      <BeanMark className="ml-[0.04em] h-[0.82em] w-[0.62em]" />
+      <BeanO className="ml-[0.02em]" />
     </span>
+  )
+}
+
+/* ------------------------------------------------------------------ *
+ * BeanMark — a small SVG bean (capsule with a punched hole), used as the
+ * decorative accent inside the menu ADD pill where a tiny font glyph
+ * would render too lightly.
+ * ------------------------------------------------------------------ */
+export function BeanMark({
+  className,
+  angle = 18,
+}: {
+  className?: string
+  angle?: number
+}) {
+  const maskId = 'beanmask-' + useId().replace(/:/g, '')
+  return (
+    <svg viewBox="0 0 120 160" className={className} aria-hidden>
+      <defs>
+        <mask id={maskId}>
+          <rect width="120" height="160" fill="black" />
+          <g transform={`rotate(${angle} 60 80)`}>
+            <rect x="25" y="11" width="70" height="138" rx="35" fill="white" />
+            <rect x="51" y="46" width="18" height="68" rx="9" fill="black" />
+          </g>
+        </mask>
+      </defs>
+      <rect width="120" height="160" fill="currentColor" mask={`url(#${maskId})`} />
+    </svg>
   )
 }

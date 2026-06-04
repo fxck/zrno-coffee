@@ -77,14 +77,14 @@ export function BeanRain({
     }
 
     function makeBean(fs: number, atTop: boolean, i: number): Bean {
-      const len = fs * rand(0.16, 0.32)
+      const len = fs * rand(0.09, 0.17)
       return {
         x: Math.random() * width,
         y: atTop ? -len - Math.random() * height : Math.random() * height,
-        vx: rand(-0.5, 0.5) * fs * 0.7,
-        vy: fs * rand(2.5, 6),
+        vx: rand(-0.5, 0.5) * fs * 0.35,
+        vy: fs * rand(0.8, 2),
         rot: Math.random() * Math.PI * 2,
-        vrot: rand(-3, 3),
+        vrot: rand(-1.6, 1.6),
         len,
         deep: i % 3 === 0,
       }
@@ -155,7 +155,7 @@ export function BeanRain({
       hoverAlpha += ((hovering ? 1 : 0) - hoverAlpha) * Math.min(1, dt * 6)
 
       const fs = fontPx()
-      const g = Math.max(1400, fs * 7)
+      const g = Math.max(650, fs * 3.2)
       for (const b of beans) {
         b.vy += g * dt
         b.x += b.vx * dt
@@ -193,7 +193,7 @@ export function BeanRain({
       ctx!.setTransform(1, 0, 0, 1, 0, 0)
       if (mask) ctx!.drawImage(mask, 0, 0)
       // 4) clip to the cursor cloud
-      const cr = Math.max(90, fs * 1.7) * dpr
+      const cr = Math.max(48, fs * 0.85) * dpr
       const grad = ctx!.createRadialGradient(
         pointer.x * dpr,
         pointer.y * dpr,

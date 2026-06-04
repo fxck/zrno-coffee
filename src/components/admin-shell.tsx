@@ -1,7 +1,7 @@
 import { Link, useRouter, useRouterState } from '@tanstack/react-router'
 import type { ReactNode } from 'react'
 import { authClient } from '../lib/auth-client'
-import { Wordmark } from './bean-mark'
+import { BeanO } from './bean-mark'
 import { Button } from './ui/button'
 
 /* ------------------------------------------------------------------ *
@@ -45,7 +45,7 @@ export function AdminShell({
         <div className="flex items-center justify-between gap-4 px-6 md:px-12 py-4">
           <div className="flex items-baseline gap-4">
             <Link to="/" aria-label="ZRNO home">
-              <Wordmark className="text-xl text-cream" />
+              <BeanO className="text-2xl text-cream" />
             </Link>
             <span className="font-mono text-[11px] tracking-[0.2em] text-taupe">
               BACK OFFICE

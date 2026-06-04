@@ -10,7 +10,7 @@ import {
 import { MENU } from '../lib/menu'
 import { useCart } from '../lib/cart'
 import { SiteHeader } from '../components/site-header'
-import { Wordmark, BeanMark } from '../components/bean-mark'
+import { Wordmark, BeanO } from '../components/bean-mark'
 import { MenuAddControl } from '../components/menu-add-control'
 import {
   EASE_OUT,
@@ -162,24 +162,18 @@ function Home() {
               >
                 <BeanRain lines={['ZRN']} />
                 {reduce ? (
-                  <BeanMark className="inline-block h-[0.82em] w-[0.64em] ml-[0.02em]" />
+                  <BeanO className="ml-[0.02em]" />
                 ) : (
                   <motion.span
                     className="inline-block"
-                    style={{ transformOrigin: '50% 52%' }}
-                    initial={{ rotate: -8 }}
-                    animate={{ rotate: [18, 13, 18] }}
-                    transition={{
-                      duration: 5.5,
-                      ease: 'easeInOut',
-                      repeat: Infinity,
-                      delay: 0.5,
-                    }}
+                    style={{ transformOrigin: '50% 55%' }}
+                    initial={{ rotate: 0 }}
+                    animate={{ rotate: 18 }}
+                    transition={{ duration: 0.9, ease: EASE_OUT, delay: 1.15 }}
                   >
-                    <BeanMark
-                      angle={0}
-                      className="inline-block h-[0.82em] w-[0.64em] ml-[0.02em]"
-                    />
+                    {/* starts upright as the "O", then tips to the bean angle
+                        once — and stays there. No perpetual motion. */}
+                    <BeanO angle={0} className="ml-[0.02em]" />
                   </motion.span>
                 )}
               </motion.span>

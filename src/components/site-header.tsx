@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { useCart, cartSummary } from '../lib/cart'
-import { Wordmark } from './bean-mark'
+import { BeanO } from './bean-mark'
 import {
   EASE_OUT,
   MagneticButton,
@@ -63,15 +63,14 @@ export function SiteHeader({
         WebkitBackdropFilter: scrolled ? 'blur(14px)' : 'blur(8px)',
       }}
     >
-      {/* Wordmark — anchors home (on the landing page, to the very top).
-          The O is the angled bean mark (shared identity). */}
+      {/* Logo — just the angled bean "O" (the brand mark). */}
       {isHome ? (
-        <a href="#top" className="shrink-0">
-          <Wordmark className="text-2xl text-cream" />
+        <a href="#top" aria-label="ZRNO home" className="shrink-0">
+          <BeanO className="text-[1.7rem] text-cream" />
         </a>
       ) : (
-        <Link to="/" className="shrink-0">
-          <Wordmark className="text-2xl text-cream" />
+        <Link to="/" aria-label="ZRNO home" className="shrink-0">
+          <BeanO className="text-[1.7rem] text-cream" />
         </Link>
       )}
 
