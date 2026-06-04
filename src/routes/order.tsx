@@ -40,6 +40,18 @@ function OrderPage() {
   useEffect(() => {
     if (!session_id || canceled || done) return
     let cancelledFx = false
+    // Confirm is usually instant — without a floor the ConfirmingView would
+    // blink past before its mount animation can play. Hold it for a minimum
+    // beat so the "ONE MOMENT…" reveal reads as a deliberate step, not a flash.
+    const start = Date.now()
+    const MIN_CONFIRM_MS = 1300
+    const settle = (fn: () => void) => {
+      if (cancelledFx) return
+      const wait = Math.max(0, MIN_CONFIRM_MS - (Date.now() - start))
+      setTimeout(() => {
+        if (!cancelledFx) fn()
+      }, wait)
+    }
     fetch('/api/checkout/confirm', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
@@ -47,19 +59,23 @@ function OrderPage() {
     })
       .then((r) => r.json())
       .then((d) => {
-        if (cancelledFx) return
         if (d.ok) {
-          clearCart()
-          setDone({ orderId: d.orderId, total: d.total, status: d.status })
+          settle(() => {
+            clearCart()
+            setDone({ orderId: d.orderId, total: d.total, status: d.status })
+          })
         } else {
-          setError(d.error || 'We could not confirm your payment.')
-          setConfirmFailed(true)
+          settle(() => {
+            setError(d.error || 'We could not confirm your payment.')
+            setConfirmFailed(true)
+          })
         }
       })
       .catch(() => {
-        if (cancelledFx) return
-        setError('We could not confirm your payment.')
-        setConfirmFailed(true)
+        settle(() => {
+          setError('We could not confirm your payment.')
+          setConfirmFailed(true)
+        })
       })
     return () => {
       cancelledFx = true
