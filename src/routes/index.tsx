@@ -468,18 +468,40 @@ function Home() {
         ref={barRef}
         className="scroll-mt-24 relative mt-24 flex min-h-[90vh] items-end overflow-hidden md:mt-40"
       >
+        {/* Looping boomerang video of the bar (forward+reverse, so it never
+            jumps), parallaxed. Muted/inline/autoplay → treated as decoration
+            by browsers. Poster + image-less fallback keep it graceful. */}
         <motion.div
           aria-hidden
-          className="absolute inset-[-10%] bg-cover bg-center"
+          className="absolute inset-[-10%]"
+          style={{ y: reduce ? 0 : barY, willChange: 'transform' }}
+        >
+          <video
+            className="h-full w-full object-cover"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            poster="/bar-poster.jpg"
+          >
+            <source src="/bar.mp4" type="video/mp4" />
+            <source src="/bar.webm" type="video/webm" />
+          </video>
+        </motion.div>
+        {/* film grain — masks the upscaled video's softness/compression */}
+        <div
+          aria-hidden
+          className="absolute inset-0 opacity-[0.10] mix-blend-overlay"
           style={{
-            backgroundImage: 'url(/bar.jpg)',
-            y: reduce ? 0 : barY,
-            willChange: 'transform',
+            backgroundImage:
+              "url(\"data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='140'%20height='140'%3E%3Cfilter%20id='n'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='0.85'%20numOctaves='2'%20stitchTiles='stitch'/%3E%3C/filter%3E%3Crect%20width='100%25'%20height='100%25'%20filter='url(%23n)'/%3E%3C/svg%3E\")",
+            backgroundSize: '140px 140px',
           }}
         />
         {/* legibility gradient — resolves to FULL background colour at the very
-            foot so the image dissolves seamlessly into the footer (no hard
-            cut), and a soft top fade so it emerges from the bg too. */}
+            foot so the video dissolves seamlessly into the footer (no hard
+            cut). */}
         <div
           aria-hidden
           className="absolute inset-0"

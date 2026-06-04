@@ -116,7 +116,7 @@ export function SiteHeader({
       {back ? (
         <Link
           to={backTo}
-          className="inline-flex items-center gap-2 border border-muted/30 font-mono text-[11px] tracking-[0.18em] text-taupe px-5 py-3 hover:border-muted/60 hover:text-cream transition-colors duration-300 shrink-0"
+          className="inline-flex h-11 items-center gap-2 border border-muted/30 font-mono text-[11px] tracking-[0.18em] text-taupe px-5 hover:border-muted/60 hover:text-cream transition-colors duration-300 shrink-0"
         >
           {backLabel}
         </Link>
@@ -125,7 +125,7 @@ export function SiteHeader({
           <Link
             to="/order"
             aria-label={count > 0 ? `Order online — ${count} in cart` : 'Order online'}
-            className="zrno-cta relative inline-flex items-center gap-2 bg-amber text-espresso font-mono text-[11px] tracking-[0.18em] px-5 py-3 hover:bg-amberdeep transition-colors duration-300 shrink-0"
+            className="zrno-cta relative inline-flex h-11 items-center gap-2 bg-amber text-espresso font-mono text-[11px] tracking-[0.18em] px-5 hover:bg-amberdeep transition-colors duration-300 shrink-0"
           >
             ORDER
             {/* When the cart has items the button becomes the cart itself —
@@ -158,7 +158,7 @@ export function SiteHeader({
                   initial={reduce ? false : { scale: 0, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   exit={reduce ? { opacity: 0 } : { scale: 0, opacity: 0 }}
-                  transition={{ type: 'spring', ...SOFT_SPRING }}
+                  transition={{ duration: 0.18, ease: EASE_OUT }}
                   className="ml-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-espresso px-1.5 font-mono text-[10px] text-amber tabular-nums"
                 >
                   {count}
