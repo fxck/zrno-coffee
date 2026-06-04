@@ -466,7 +466,7 @@ function Home() {
       <section
         id="visit"
         ref={barRef}
-        className="scroll-mt-24 relative flex min-h-[90vh] items-end overflow-hidden"
+        className="scroll-mt-24 relative mt-24 flex min-h-[90vh] items-end overflow-hidden md:mt-40"
       >
         <motion.div
           aria-hidden
@@ -477,13 +477,15 @@ function Home() {
             willChange: 'transform',
           }}
         />
-        {/* legibility gradient — dense at the foot where the type lives */}
+        {/* legibility gradient — resolves to FULL background colour at the very
+            foot so the image dissolves seamlessly into the footer (no hard
+            cut), and a soft top fade so it emerges from the bg too. */}
         <div
           aria-hidden
           className="absolute inset-0"
           style={{
             backgroundImage:
-              'linear-gradient(0deg, rgba(11,9,8,0.95) 0%, rgba(11,9,8,0.6) 40%, rgba(11,9,8,0.12) 100%)',
+              'linear-gradient(0deg, rgba(11,9,8,1) 0%, rgba(11,9,8,0.92) 10%, rgba(11,9,8,0.5) 44%, rgba(11,9,8,0.12) 100%)',
           }}
         />
 
