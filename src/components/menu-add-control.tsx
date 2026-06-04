@@ -1,6 +1,6 @@
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { addItem, setQty } from '../lib/cart'
-import { BeanMark } from './bean-mark'
+import { BeanO } from './bean-mark'
 import { EASE_OUT } from './motion-primitives'
 
 /* ------------------------------------------------------------------ *
@@ -100,8 +100,8 @@ export function MenuAddControl({
                 aria-hidden
                 className={`absolute inset-0 -z-10 origin-bottom scale-y-0 rounded-full bg-amber transition-transform ${BECHAMEL} group-hover/add:scale-y-100`}
               />
-              <BeanMark
-                className={`h-[1.05em] w-[0.8em] transition-[transform,color] ${BECHAMEL} group-hover/row:rotate-[12deg] group-hover/add:rotate-[26deg] group-hover/add:text-espresso`}
+              <BeanO
+                className={`text-[1.15em] text-amber transition-colors ${BECHAMEL} group-hover/add:text-espresso`}
               />
               <span
                 className={`transition-colors ${BECHAMEL} group-hover/add:text-espresso`}

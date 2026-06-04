@@ -1,5 +1,3 @@
-import { useId } from 'react'
-
 /* ------------------------------------------------------------------ *
  * BeanO — the actual Anton "O", tipped to the right so it reads as a
  * roasted bean. Because it's the real font glyph, it's exactly the same
@@ -40,34 +38,5 @@ export function Wordmark({ className }: { className?: string }) {
       <span aria-hidden>ZRN</span>
       <BeanO className="ml-[0.02em]" />
     </span>
-  )
-}
-
-/* ------------------------------------------------------------------ *
- * BeanMark — a small SVG bean (capsule with a punched hole), used as the
- * decorative accent inside the menu ADD pill where a tiny font glyph
- * would render too lightly.
- * ------------------------------------------------------------------ */
-export function BeanMark({
-  className,
-  angle = 18,
-}: {
-  className?: string
-  angle?: number
-}) {
-  const maskId = 'beanmask-' + useId().replace(/:/g, '')
-  return (
-    <svg viewBox="0 0 120 160" className={className} aria-hidden>
-      <defs>
-        <mask id={maskId}>
-          <rect width="120" height="160" fill="black" />
-          <g transform={`rotate(${angle} 60 80)`}>
-            <rect x="25" y="11" width="70" height="138" rx="35" fill="white" />
-            <rect x="51" y="46" width="18" height="68" rx="9" fill="black" />
-          </g>
-        </mask>
-      </defs>
-      <rect width="120" height="160" fill="currentColor" mask={`url(#${maskId})`} />
-    </svg>
   )
 }

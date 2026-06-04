@@ -10,7 +10,7 @@ import {
 import { MENU } from '../lib/menu'
 import { useCart } from '../lib/cart'
 import { SiteHeader } from '../components/site-header'
-import { Wordmark } from '../components/bean-mark'
+import { Wordmark, BeanO } from '../components/bean-mark'
 import { MenuAddControl } from '../components/menu-add-control'
 import {
   EASE_OUT,
@@ -154,15 +154,33 @@ function Home() {
             <h1 className="font-display t-hero px-6 md:px-14 mt-4 md:mt-6 pb-[2vh] select-none">
               {/* ZRN carries the bean-rain on hover; the O is the angled
                   bean mark itself, tipping in and gently wiggling forever. */}
-              {/* The whole word rains (each letter, incl. the O) under its own
-                  cursor cloud. The angled bean-O lives on as the logo mark. */}
+              {/* ZRN rains per-letter under the cursor cloud; the O is its
+                  own rain field, tipped to the bean angle (glyph + canvas
+                  rotate together so the clip stays aligned) and it rains too. */}
               <motion.span
-                className="block"
+                className="inline-flex items-baseline"
                 initial={reduce ? false : { opacity: 0, y: '0.1em' }}
                 animate={reduce ? {} : { opacity: 1, y: 0 }}
                 transition={{ duration: 1.1, ease: EASE_OUT, delay: 0.4 }}
               >
-                <BeanRain lines={['ZRNO']} />
+                <BeanRain lines={['ZRN']} />
+                {reduce ? (
+                  <BeanRain
+                    lines={['O']}
+                    whole
+                    className="ml-[0.02em] origin-bottom rotate-[18deg]"
+                  />
+                ) : (
+                  <motion.span
+                    className="ml-[0.02em] inline-block"
+                    style={{ transformOrigin: '50% 100%' }}
+                    initial={{ rotate: 0 }}
+                    animate={{ rotate: 18 }}
+                    transition={{ duration: 0.9, ease: EASE_OUT, delay: 1.15 }}
+                  >
+                    <BeanRain lines={['O']} whole />
+                  </motion.span>
+                )}
               </motion.span>
             </h1>
           </div>
