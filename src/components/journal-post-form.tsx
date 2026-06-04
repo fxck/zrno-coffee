@@ -152,85 +152,90 @@ export default function JournalPostForm({ post }: Props) {
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Post title"
             rows={1}
-            className="w-full resize-none bg-transparent font-display text-4xl md:text-5xl leading-[0.98] text-cream placeholder:text-muted outline-none"
+            className="w-full resize-none bg-transparent font-display text-4xl md:text-5xl leading-[1.04] text-cream placeholder:text-muted/50 outline-none"
           />
 
-          <div className="grid grid-cols-1 sm:grid-cols-[1fr_2fr] gap-5 items-start">
-            <div className="space-y-1.5">
-              <Label htmlFor="slug">Slug</Label>
-              <Input
-                id="slug"
-                value={slug}
-                onChange={(e) => {
-                  slugTouched.current = true
-                  setSlug(e.target.value)
-                }}
-                onBlur={(e) => setSlug(slugify(e.target.value))}
-                placeholder="auto-from-title"
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <Label>Cover image</Label>
-              <input
-                ref={coverInputRef}
-                type="file"
-                accept={ACCEPT_IMAGE}
-                className="hidden"
-                onChange={onCoverFile}
-              />
-              {cover ? (
-                <div className="group relative aspect-[16/9] w-full overflow-hidden rounded border border-muted/20 bg-elevated">
-                  <img
-                    key={cover}
-                    src={cover}
-                    alt="Cover preview"
-                    className="h-full w-full object-cover"
-                    onError={(e) => (e.currentTarget.style.opacity = '0.15')}
+          {/* Post settings — slug + excerpt paired with the cover, balanced
+              so neither column strands the other in empty space. */}
+          <div className="rounded-xl border border-muted/15 bg-surface/50 p-5 sm:p-6">
+            <div className="grid gap-6 sm:grid-cols-2">
+              <div className="space-y-5">
+                <div className="space-y-1.5">
+                  <Label htmlFor="slug">Slug</Label>
+                  <Input
+                    id="slug"
+                    value={slug}
+                    onChange={(e) => {
+                      slugTouched.current = true
+                      setSlug(e.target.value)
+                    }}
+                    onBlur={(e) => setSlug(slugify(e.target.value))}
+                    placeholder="auto-from-title"
                   />
-                  <div className="absolute inset-0 flex items-center justify-center gap-2 bg-espresso/70 opacity-0 backdrop-blur-[2px] transition-opacity duration-200 group-hover:opacity-100">
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="outline"
-                      disabled={coverBusy}
-                      onClick={() => coverInputRef.current?.click()}
-                    >
-                      {coverBusy ? 'Uploading…' : 'Replace'}
-                    </Button>
-                    <Button type="button" size="sm" variant="ghost" onClick={() => setCover('')}>
-                      Remove
-                    </Button>
-                  </div>
                 </div>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => coverInputRef.current?.click()}
-                  disabled={coverBusy}
-                  className="flex aspect-[16/9] w-full flex-col items-center justify-center gap-2 rounded border border-dashed border-muted/40 bg-elevated/40 text-taupe transition-colors hover:border-amber/50 hover:text-cream disabled:opacity-60"
-                >
-                  <ImagePlus size={22} strokeWidth={1.75} />
-                  <span className="font-mono text-[11px] tracking-[0.16em]">
-                    {coverBusy ? 'UPLOADING…' : 'UPLOAD COVER IMAGE'}
-                  </span>
-                  <span className="text-[11px] text-muted">JPEG · PNG · WebP — up to 8 MB</span>
-                </button>
-              )}
-              {coverErr && <p className="text-red-400 text-xs">{coverErr}</p>}
-            </div>
-          </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="excerpt">Excerpt</Label>
+                  <textarea
+                    id="excerpt"
+                    value={excerpt}
+                    onChange={(e) => setExcerpt(e.target.value)}
+                    rows={3}
+                    placeholder="One or two sentences for the journal index."
+                    className="w-full resize-y rounded-md bg-elevated px-3.5 py-2.5 text-sm leading-relaxed text-cream placeholder:text-muted outline-none focus:ring-2 focus:ring-amber/40"
+                  />
+                </div>
+              </div>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="excerpt">Excerpt</Label>
-            <textarea
-              id="excerpt"
-              value={excerpt}
-              onChange={(e) => setExcerpt(e.target.value)}
-              rows={2}
-              placeholder="One or two sentences for the journal index."
-              className="w-full resize-y bg-elevated px-4 py-3 text-sm text-cream placeholder:text-muted outline-none focus:ring-2 focus:ring-amber/50"
-            />
+              <div className="space-y-1.5">
+                <Label>Cover image</Label>
+                <input
+                  ref={coverInputRef}
+                  type="file"
+                  accept={ACCEPT_IMAGE}
+                  className="hidden"
+                  onChange={onCoverFile}
+                />
+                {cover ? (
+                  <div className="group relative aspect-[16/10] w-full overflow-hidden rounded-md border border-muted/20 bg-elevated">
+                    <img
+                      key={cover}
+                      src={cover}
+                      alt="Cover preview"
+                      className="h-full w-full object-cover"
+                      onError={(e) => (e.currentTarget.style.opacity = '0.15')}
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center gap-2 bg-espresso/70 opacity-0 backdrop-blur-[2px] transition-opacity duration-200 group-hover:opacity-100">
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        disabled={coverBusy}
+                        onClick={() => coverInputRef.current?.click()}
+                      >
+                        {coverBusy ? 'Uploading…' : 'Replace'}
+                      </Button>
+                      <Button type="button" size="sm" variant="ghost" onClick={() => setCover('')}>
+                        Remove
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => coverInputRef.current?.click()}
+                    disabled={coverBusy}
+                    className="flex aspect-[16/10] w-full flex-col items-center justify-center gap-2 rounded-md border border-dashed border-muted/40 bg-elevated/40 text-taupe transition-colors hover:border-amber/50 hover:text-cream disabled:opacity-60"
+                  >
+                    <ImagePlus size={20} strokeWidth={1.75} />
+                    <span className="font-mono text-[11px] tracking-[0.16em]">
+                      {coverBusy ? 'UPLOADING…' : 'UPLOAD COVER'}
+                    </span>
+                    <span className="text-[11px] text-muted">JPEG · PNG · WebP — 8 MB</span>
+                  </button>
+                )}
+                {coverErr && <p className="text-red-400 text-xs">{coverErr}</p>}
+              </div>
+            </div>
           </div>
         </div>
 
