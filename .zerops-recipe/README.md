@@ -89,7 +89,7 @@ ZRNO is meant to be adopted as a template. To run your own copy:
 <!-- #ZEROPS_EXTRACT_END:takeover-guide# -->
 
 <!-- #ZEROPS_EXTRACT_START:knowledge-base# -->
-## Architecture
+### Architecture
 
 ZRNO is a single TanStack Start service (React 19 SSR via Vite + Nitro, Node.js
 24) that serves both the storefront and a JSON API from file-based routes under
@@ -107,7 +107,7 @@ health check. In the Development environment `appdev` idles (no supervised
 `run.start`) so a coding agent owns the dev server, while `appstage` runs the
 real production build.
 
-## Environment variable reference
+### Environment variable reference
 
 Wired automatically in `zerops.yaml` `run.envVariables` from service hostnames —
 nothing to set by hand:
@@ -123,7 +123,7 @@ Set by the import (`project.envVariables`): `BETTER_AUTH_SECRET` (generated),
 `ADMIN_EMAIL`, `ADMIN_PASSWORD` (generated). Optional: `STRIPE_SECRET_KEY`,
 `STRIPE_PUBLISHABLE_KEY`.
 
-## Troubleshooting
+### Troubleshooting
 
 - **App boots but search/⌘K errors** — the `search` (Meilisearch) service must
   be present and reachable; it floors at `minRam: 1` to avoid OOM crash-loops.
