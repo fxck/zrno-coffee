@@ -15,23 +15,30 @@ admin back office — that you can fork into your own café, blog or storefront.
 <!-- #ZEROPS_EXTRACT_END:intro# -->
 
 <!-- #ZEROPS_EXTRACT_START:cover# -->
-![ZRNO storefront](https://raw.githubusercontent.com/fxck/zrno-cafe/main/.zerops-recipe/cover.png)
+![ZRNO storefront](https://raw.githubusercontent.com/fxck/zrno-shop/main/.zerops-recipe/cover.png)
 <!-- #ZEROPS_EXTRACT_END:cover# -->
 
 <!-- #ZEROPS_EXTRACT_START:description# -->
-ZRNO ships three environments. The **Development + Stage** pair gives you an
-agent-owned dev workspace next to a real production-build stage for verifying
-what ships; **Production** runs the hardened build on its own. Pick one from the
-selector above — start in Development to build, promote to Production when ready.
+ZRNO ships as **three project environments** — each a complete, self-contained
+import you pick from the selector above:
 
-Under the hood it's a single TanStack Start app (React 19, server-side rendered)
-backed by PostgreSQL, S3-compatible object storage, Meilisearch and SMTP email —
-all wired together by hostname at import, nothing to configure by hand. Customers
-browse the menu, fill a cart and check out with email confirmations, read a
-publishing-grade journal and subscribe to updates; behind it sits a full admin
-back office for orders, subscribers, passkey-secured accounts and a rich journal
-editor with image uploads. It's a real app, not a skeleton — fork it and make it
-your own.
+- **Development** — a dev + stage pair: an agent-owned `appdev` workspace you can
+  mount and hack on live, beside an `appstage` running the real production build
+  to verify what ships. Lightweight plan; start here.
+- **Stage** — a single production-build instance for previews, QA and demos: the
+  shipped app, no dev tooling. Lightweight plan.
+- **Production** — the hardened topology: highly-available 3-node PostgreSQL with
+  auto-failover and the app scaled across 2–4 dedicated-CPU containers behind
+  zero-downtime rolling deploys. Serious plan.
+
+Every environment runs the same **TanStack Start** app (React 19, server-side
+rendered) backed by **PostgreSQL**, **S3-compatible object storage**,
+**Meilisearch** and **SMTP email** — all wired by hostname at import, nothing to
+configure by hand. Customers browse the menu, fill a cart and check out with
+email confirmations, read a publishing-grade journal and subscribe; behind it
+sits a full admin back office for orders, subscribers, passkey-secured accounts
+and a rich journal editor with uploads. A real app, not a skeleton — fork it and
+make it your own.
 <!-- #ZEROPS_EXTRACT_END:description# -->
 
 <!-- #ZEROPS_EXTRACT_START:features# -->
@@ -55,17 +62,12 @@ your own.
 <!-- #ZEROPS_EXTRACT_END:features# -->
 
 <!-- #ZEROPS_EXTRACT_START:takeover-guide# -->
-## Make it yours
+### Make it yours
 
 ZRNO is meant to be adopted as a template. To run your own copy:
 
-1. **Fork the repo** and push it to your own GitHub account.
-   ```bash
-   git clone https://github.com/fxck/zrno-coffee.git my-coffee-shop
-   cd my-coffee-shop
-   git remote set-url origin https://github.com/<you>/my-coffee-shop.git
-   git push -u origin main
-   ```
+1. **Fork it to your account.** Fork the repo on GitHub (or push the clone above
+   to a new repository of your own).
 2. **Point the import at your fork.** In the env folder you deploy, edit each
    `buildFromGit:` URL to your repo (skip this if you deploy the canonical repo
    as-is).
