@@ -1,18 +1,18 @@
 #zeropsPreprocessor=on
 # ─────────────────────────────────────────────────────────────────────────
-# ZRNO — AI-AGENT WORKSPACE (dev + stage pair)
+# ZRNO — DEVELOPMENT (dev + stage pair)
 #
 # Imports the full project as a dev/stage PAIR so a coding agent (Zerops
 # Control Panel / Claude Code) can iterate on `appdev` and verify the
 # production build on `appstage` — both seeded from git, sharing one db,
-# object storage and Mailpit.
+# object storage, Meilisearch and Mailpit.
 #
 #   appdev   → zerops.yaml `dev`  block (idles; agent runs the dev server)
 #   appstage → zerops.yaml `prod` block (real Node SSR server)
 #
 # Stripe is intentionally OMITTED → the app runs in simulated-checkout mode.
 # Add STRIPE_SECRET_KEY (+ STRIPE_PUBLISHABLE_KEY) in the project env later
-# to switch on real Stripe Checkout. See recipe/README.md.
+# to switch on real Stripe Checkout.
 # ─────────────────────────────────────────────────────────────────────────
 project:
   name: zrno-coffee-dev
@@ -42,6 +42,15 @@ services:
     priority: 10
     objectStorageSize: 5
     objectStoragePolicy: public-objects-read
+
+  # Meilisearch — back-office ⌘K command-palette index. Floored at 1 GB RAM:
+  # the default 0.25 GB OOM crash-loops the engine.
+  - hostname: search
+    type: meilisearch@1.44
+    mode: NON_HA
+    priority: 10
+    verticalAutoscaling:
+      minRam: 1
 
   # Mailpit — local SMTP catcher + web UI (order/subscribe emails in dev).
   - hostname: mailpit

@@ -3,9 +3,9 @@
 # ZRNO — PRODUCTION
 #
 # Production-grade topology: HA PostgreSQL (3-node), larger object storage,
-# and an `app` runtime scaled to 2–4 dedicated-CPU containers with a
-# health-gated rolling deploy (zero downtime). Requires the SERIOUS project
-# plan (HA managed services + multi-container).
+# Meilisearch, and an `app` runtime scaled to 2–4 dedicated-CPU containers
+# with a health-gated rolling deploy (zero downtime). Requires the SERIOUS
+# project plan (HA managed services + multi-container).
 #
 # Email: ships with Mailpit so the recipe works out of the box. For real
 # production email, set SMTP_HOST / SMTP_PORT / credentials in the project
@@ -41,6 +41,14 @@ services:
     priority: 10
     objectStorageSize: 25
     objectStoragePolicy: public-objects-read
+
+  # Meilisearch — back-office ⌘K search. Floored at 1 GB to avoid OOM.
+  - hostname: search
+    type: meilisearch@1.44
+    mode: NON_HA
+    priority: 10
+    verticalAutoscaling:
+      minRam: 1
 
   # Mailpit catcher (replace with a real SMTP provider for production email).
   - hostname: mailpit

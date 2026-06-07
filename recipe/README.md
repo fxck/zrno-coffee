@@ -20,7 +20,7 @@ everywhere else).
 ## Prerequisites
 
 1. **Push this project to git.** The imports reference
-   `https://github.com/fxck/pencil-zerops`. Push the repo there (or edit the
+   `https://github.com/fxck/zrno-coffee`. Push the repo there (or edit the
    `buildFromGit:` URL in each file to your fork). The repo must be reachable
    by Zerops at build time — public, or a private repo you've connected.
 2. A Zerops account. `prod.yml` needs the **Serious** project plan (HA + multi
