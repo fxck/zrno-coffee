@@ -1,22 +1,20 @@
 #zeropsPreprocessor=on
 # ─────────────────────────────────────────────────────────────────────────
-# ZRNO — PRODUCTION
+# ZRNO — SMALL PRODUCTION
 #
-# Production-grade topology: HA PostgreSQL (3-node), larger object storage,
-# Meilisearch, and an `app` runtime scaled to 2–4 dedicated-CPU containers
-# with a health-gated rolling deploy (zero downtime). Requires the SERIOUS
-# project plan (HA managed services + multi-container).
+# A production-ready setup tuned for moderate throughput: the `app` runtime
+# scales 1–2 containers on SHARED CPU with health-gated rolling deploys
+# (zero downtime), while the managed services stay single-instance (NON_HA)
+# with snapshot backups. Cheaper than the HA topology — pick this to run ZRNO
+# in production without the 3-node database + dedicated-CPU overhead.
 #
-# Email: ships with Mailpit so the recipe works out of the box. For real
-# production email, set SMTP_HOST / SMTP_PORT / credentials in the project
-# env (overriding the zerops.yaml defaults) and remove the mailpit service.
-#
-# Payments: add STRIPE_SECRET_KEY + STRIPE_PUBLISHABLE_KEY (LIVE keys) to the
-# project env to enable real Stripe Checkout. Without them the app runs in
-# simulated-checkout mode.
+# Email: ships with Mailpit. For real email set SMTP_HOST / SMTP_PORT /
+# credentials in the project env and remove the mailpit service.
+# Payments: add STRIPE_SECRET_KEY + STRIPE_PUBLISHABLE_KEY (LIVE) to enable
+# real Stripe Checkout; without them the app runs in simulated mode.
 # ─────────────────────────────────────────────────────────────────────────
 project:
-  name: zrno-coffee-prod
+  name: zrno-coffee-prod-small
   corePackage: SERIOUS
   tags:
     - zrno
@@ -28,10 +26,10 @@ project:
     ADMIN_PASSWORD: <@generateRandomString(<20>)>
 
 services:
-  # HA PostgreSQL — 3-node master/replica, auto-failover.
+  # Single-instance PostgreSQL (snapshot backups, no auto-failover).
   - hostname: db
     type: postgresql@16
-    mode: HA
+    mode: NON_HA
     priority: 10
     verticalAutoscaling:
       minRam: 1
@@ -39,7 +37,7 @@ services:
   - hostname: storage
     type: object-storage
     priority: 10
-    objectStorageSize: 25
+    objectStorageSize: 10
     objectStoragePolicy: public-objects-read
 
   # Meilisearch — back-office ⌘K search. Floored at 1 GB to avoid OOM.
@@ -50,21 +48,21 @@ services:
     verticalAutoscaling:
       minRam: 1
 
-  # Mailpit catcher (replace with a real SMTP provider for production email).
+  # Mailpit catcher (swap for a real SMTP provider in production).
   - hostname: mailpit
     type: alpine@3.20
     priority: 10
     enableSubdomainAccess: true
     buildFromGit: https://github.com/zeropsio/recipe-mailpit
 
-  # Production app — 2–4 dedicated-CPU containers, health-gated deploys.
+  # Production app — 1–2 shared-CPU containers, health-gated rolling deploys.
   - hostname: app
     type: nodejs@24
     enableSubdomainAccess: true
     buildFromGit: https://github.com/fxck/zrno-coffee
     zeropsSetup: prod
-    minContainers: 2
-    maxContainers: 4
+    minContainers: 1
+    maxContainers: 2
     verticalAutoscaling:
-      cpuMode: DEDICATED
+      cpuMode: SHARED
       minRam: 0.5

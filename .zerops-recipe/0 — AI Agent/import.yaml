@@ -1,6 +1,6 @@
 #zeropsPreprocessor=on
 # ─────────────────────────────────────────────────────────────────────────
-# ZRNO — DEVELOPMENT (dev + stage pair)
+# ZRNO — AI AGENT (dev + stage pair)
 #
 # Imports the full project as a dev/stage PAIR so a coding agent (Zerops
 # Control Panel / Claude Code) can iterate on `appdev` and verify the
@@ -15,7 +15,7 @@
 # to switch on real Stripe Checkout.
 # ─────────────────────────────────────────────────────────────────────────
 project:
-  name: zrno-coffee-dev
+  name: zrno-coffee-agent
   corePackage: LIGHT
   tags:
     - zrno

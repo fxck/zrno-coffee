@@ -32,17 +32,22 @@ server-side rendered) and backed by **PostgreSQL**, **S3-compatible object
 storage**, **Meilisearch** and **SMTP email** — all wired by hostname at import,
 nothing to configure by hand. Fork it and make it your own.
 
-It ships as **three project environments**, each a complete, self-contained
-import you pick from the deploy selector:
+It ships as **six project environments** spanning the full lifecycle — each a
+complete, self-contained import you pick from the deploy selector:
 
-- **Development** — a dev + stage pair: an agent-owned `appdev` workspace you can
-  mount and hack on live, beside an `appstage` running the real production build
-  to verify what ships. Lightweight plan; start here.
-- **Stage** — a single production-build instance for previews, QA and demos: the
-  shipped app, no dev tooling. Lightweight plan.
-- **Production** — the hardened topology: highly-available 3-node PostgreSQL with
-  auto-failover and the app scaled across 2–4 dedicated-CPU containers behind
-  zero-downtime rolling deploys. Serious plan.
+- **AI Agent** — a dev + stage pair: an agent-owned `appdev` workspace to mount
+  and hack on live, beside an `appstage` running the real production build.
+- **Remote CDE** — one cloud dev container you attach a remote IDE to and run the
+  dev server inside, services reachable by hostname.
+- **Local** — just the managed services; run the app on your machine over the
+  Zerops VPN, no local Docker.
+- **Stage** — a single production-build instance for previews, QA and demos.
+- **Small Production** — production on shared CPU (1–2 app containers), managed
+  services single-instance with snapshot backups.
+- **HA Production** — the hardened topology: highly-available 3-node PostgreSQL
+  with auto-failover and the app scaled across 2–4 dedicated-CPU containers.
+
+The first three run on the Lightweight plan; the production tiers on Serious.
 <!-- #ZEROPS_EXTRACT_END:description# -->
 
 <!-- #ZEROPS_EXTRACT_START:features# -->

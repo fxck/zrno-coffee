@@ -1,0 +1,48 @@
+#zeropsPreprocessor=on
+# ─────────────────────────────────────────────────────────────────────────
+# ZRNO — LOCAL (back the app while you run it on your machine)
+#
+# Just the managed services — PostgreSQL, object storage, Meilisearch and
+# Mailpit. You run the ZRNO app LOCALLY (`npm run dev`) and reach these over
+# the Zerops VPN (`zcli vpn up`) by hostname (db, storage, search, mailpit),
+# so your laptop talks to real cloud data services with no Docker. Lightweight
+# plan. Pick this for a local dev loop against cloud-managed backing services.
+#
+# Stripe OMITTED → simulated checkout. Add keys to your local env to test it.
+# ─────────────────────────────────────────────────────────────────────────
+project:
+  name: zrno-coffee-local
+  corePackage: LIGHT
+  tags:
+    - zrno
+    - tanstack-start
+  envVariables:
+    BETTER_AUTH_SECRET: <@generateRandomString(<48>)>
+    ADMIN_EMAIL: admin@zrno.cz
+    ADMIN_PASSWORD: <@generateRandomString(<16>)>
+
+services:
+  - hostname: db
+    type: postgresql@16
+    mode: NON_HA
+    priority: 10
+
+  - hostname: storage
+    type: object-storage
+    priority: 10
+    objectStorageSize: 5
+    objectStoragePolicy: public-objects-read
+
+  # Meilisearch — back-office ⌘K search. Floored at 1 GB to avoid OOM.
+  - hostname: search
+    type: meilisearch@1.44
+    mode: NON_HA
+    priority: 10
+    verticalAutoscaling:
+      minRam: 1
+
+  - hostname: mailpit
+    type: alpine@3.20
+    priority: 10
+    enableSubdomainAccess: true
+    buildFromGit: https://github.com/zeropsio/recipe-mailpit
